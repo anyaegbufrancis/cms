@@ -46,14 +46,14 @@ function runSearch() {
         message: "What do you like to view?",
         when: (response) =>
           response.action === "View Employees, Roles, Departments or Managers",
-        choices: ["Employee Data", "Roles, Managers or Departments"],
+        choices: ["Employee Details", "Roles, Managers or Departments"],
       },
 
       {
         name: "employee",
         type: "list",
         message: "What Employee data do you want to view?",
-        when: (response) => response.view === "Employee Data",
+        when: (response) => response.view === "Employee Details",
         choices: [
           "ALL Employees",
           "Employees by Department",
@@ -72,20 +72,20 @@ function runSearch() {
     ])
 
     .then(function (answer) {
-      switch (answer.action) {
-        case "All Employees":
+      switch (answer.employee) {
+        case "ALL Employees":
           employeeView();
           break;
 
-        case "View All Employees by Department":
+        case "Employees by Department":
           employeeByDepartment();
           break;
 
-        case "View All Employees by Manager":
+        case "Employees by Manager":
           employeeByManager();
           break;
 
-        case "View All Roles":
+        case "Employees by Job Title":
           viewRoles();
           break;
 
@@ -129,6 +129,7 @@ function employeeView() {
     "\n*********************************[ LIST OF EMPLOYEES ]********************************\n"
       .yellow
   );
+  
   connection.query(query, function (err, res) {
     if (err) throw err;
     console.table(res);
