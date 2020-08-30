@@ -1,6 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 const cTable = require('console.table');
+const colors = require("colors")
 
 
 var connection = mysql.createConnection({
@@ -30,21 +31,45 @@ function runSearch() {
       type: "list",
       message: "What would you like to do?",
       choices: [
-        "View All Employees",
-        "View All Employees by Department",
-        "View All Employees by Manager",        
-        "View All Roles",
+        "View Employees, Roles, Departments or Managers",
         "Add Employee",        
         "Add Roles",
         "Update Employee Role",
         "Update Employee Manager",        
         "Remove Employee",
         "Remove Roles"
+      ],
+      name: "view",
+      type: "list",
+      message: "What do you like to view?",
+      when: (response) => response.action === "View Employees, Roles, Departments or Managers", 
+      choices: [
+        "Employee Data",
+        "Roles, Managers or Departments"
+      ],
+      name: "employee",
+      type: "list",
+      message: "What Employee data do you want to view?",
+      when: (response) => response.view === "Employee Data",
+      choices: [
+        "ALL Employees",
+        "Employees by Department",
+        "Employees by Manager",
+        "Employees by Job Title",
+      ], 
+      name: "rmd",
+      type: "list",
+      message: "Please select which data you like to view?",
+      when: (response) => response.view === "Employee Data",
+      choices: [
+        "Roles",
+        "Department",
+        "Manager"
       ]
     })
     .then(function(answer) {
       switch (answer.action) {
-      case "View All Employees":
+      case "All Employees":
         employeeView();
         break;
 
@@ -88,14 +113,14 @@ function runSearch() {
     });
 }
 
-function employeeView (answer) {
-      console.log("Building output...\n");
-      var query = "select employee_id, first_name, last_name, job_title, department_name, salary, manager_name ";
-          query += "from employee ";
-          query += "inner join role on employee.role_id=role.role_id "
-          query += "inner join department on role.department_id=department.department_id "
-          query += "inner join manager on employee.manager_id=manager.manager_id ";
-      console.log("\nLIST OF EMPLOYEES\n")
+function employeeView () {
+      console.table("Building output...\n");
+      var query = "SELECT employee_id ID, first_name 'First Name', last_name 'Last Name', job_title 'Title', department_name 'Department', salary 'Salary', manager_name 'Manager' ";
+          query += "FROM employee ";
+          query += "INNER JOIN role ON employee.role_id=role.role_id "
+          query += "INNER JOIN department ON role.department_id=department.department_id "
+          query += "INNER join manager on employee.manager_id=manager.manager_id ";
+      console.log("\n*********************************[ LIST OF EMPLOYEES ]********************************\n".yellow)
       connection.query(query, function(err, res) {
        if (err) throw err
         console.table(res)
