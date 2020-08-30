@@ -1,7 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 const cTable = require('console.table');
-const colors = require("colors")
+const colors = require("colors");
 
 
 var connection = mysql.createConnection({
@@ -37,7 +37,8 @@ function runSearch() {
         "Update Employee Role",
         "Update Employee Manager",        
         "Remove Employee",
-        "Remove Roles"
+        "Remove Roles",
+        "EXIT"
       ],
       
       name: "view",
