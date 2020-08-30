@@ -60,7 +60,7 @@ function runSearch() {
       name: "rmd",
       type: "list",
       message: "Please select which data you like to view?",
-      when: (response) => response.view === "Employee Data",
+      when: (response) => response.view === "Roles, Managers or Departments",
       choices: [
         "Roles",
         "Department",
