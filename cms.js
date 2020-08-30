@@ -73,6 +73,7 @@ function runSearch() {
 
     .then(function (answer) {
       switch (answer.employee) {
+        // Block Query No 1 Begins
         case "ALL Employees":
           employeeView();
           break;
@@ -86,21 +87,22 @@ function runSearch() {
           break;
 
         case "Employees by Job Title":
-          viewRoles();
+          viewJobTitle();
           break;
 
-        case "Add Employee":
-          addEmployee();
+        case "Roles":
+          allRoles();
           break;
 
-        case "Add Roles":
-          addRoles();
+        case "Department":
+          addDepartments();
           break;
 
-        case "Update Employee Role":
-          updateRole();
+        case "Manager":
+          allManagers();
           break;
-
+        // Block Query No 1 Ends.....//
+        //*******Add Cases Begins** */
         case "Update Employee Manager":
           updateManager();
           break;
@@ -117,6 +119,28 @@ function runSearch() {
 }
 
 function employeeView() {
+  console.table("Building output...\n");
+  var query =
+    "SELECT employee_id ID, first_name 'First Name', last_name 'Last Name', job_title 'Title', department_name 'Department', salary 'Salary', manager_name 'Manager' ";
+  query += "FROM employee ";
+  query += "INNER JOIN role ON employee.role_id=role.role_id ";
+  query +=
+    "INNER JOIN department ON role.department_id=department.department_id ";
+  query += "INNER join manager on employee.manager_id=manager.manager_id ";
+  console.log(
+    "\n*********************************[ LIST OF EMPLOYEES ]********************************\n"
+      .yellow
+  );
+  
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    console.table(res);
+    // runSearch()
+    connection.end();
+  });
+}
+
+function employeeByDepartment() {
   console.table("Building output...\n");
   var query =
     "SELECT employee_id ID, first_name 'First Name', last_name 'Last Name', job_title 'Title', department_name 'Department', salary 'Salary', manager_name 'Manager' ";
