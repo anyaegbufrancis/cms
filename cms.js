@@ -39,6 +39,7 @@ function runSearch() {
         "Remove Employee",
         "Remove Roles"
       ],
+      
       name: "view",
       type: "list",
       message: "What do you like to view?",
@@ -47,6 +48,7 @@ function runSearch() {
         "Employee Data",
         "Roles, Managers or Departments"
       ],
+      
       name: "employee",
       type: "list",
       message: "What Employee data do you want to view?",
@@ -57,6 +59,7 @@ function runSearch() {
         "Employees by Manager",
         "Employees by Job Title",
       ], 
+      
       name: "rmd",
       type: "list",
       message: "Please select which data you like to view?",
@@ -67,6 +70,7 @@ function runSearch() {
         "Manager"
       ]
     })
+    
     .then(function(answer) {
       switch (answer.action) {
       case "All Employees":
