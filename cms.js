@@ -32,15 +32,15 @@ function runSearch() {
       message: "What would you like to do?",
       choices: [
         "View Employees, Roles, Departments or Managers",
-        "Add Employee",        
-        "Add Roles",
+        "Add Employee, Roles, Departments or Managers",        
         "Update Employee Role",
         "Update Employee Manager",        
         "Remove Employee",
         "Remove Roles",
         "EXIT"
-      ],
-      
+      ]},
+            
+      {
       name: "view",
       type: "list",
       message: "What do you like to view?",
@@ -48,8 +48,9 @@ function runSearch() {
       choices: [
         "Employee Data",
         "Roles, Managers or Departments"
-      ],
+      ]},
       
+    {
       name: "employee",
       type: "list",
       message: "What Employee data do you want to view?",
@@ -59,18 +60,19 @@ function runSearch() {
         "Employees by Department",
         "Employees by Manager",
         "Employees by Job Title",
-      ], 
+      ]},
       
-      name: "rmd",
-      type: "list",
-      message: "Please select which data you like to view?",
-      when: (response) => response.view === "Roles, Managers or Departments",
-      choices: [
-        "Roles",
-        "Department",
-        "Manager"
-      ]
-    })
+      {
+        name: "rmd",
+        type: "list",
+        message: "Please select which data you like to view?",
+        when: (response) => response.view === "Roles, Managers or Departments",
+        choices: [
+          "Roles",
+          "Department",
+          "Manager"
+        ]}
+    )
     
     .then(function(answer) {
       switch (answer.action) {
