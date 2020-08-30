@@ -21,11 +21,11 @@ INSERT INTO role (job_title, salary, department_id)
 VALUES ("Sales Person", 200000, 2);
 
 -- ALL Employee Query--
-select employee_id, first_name, last_name, job_title, department_name, salary, manager_name
-from employee
-inner join role on employee.role_id=role.role_id
-inner join department on role.department_id=department.department_id
-inner join manager on employee.manager_id=manager.manager_id
+SELECT employee_id, first_name, last_name, job_title, department_name, salary, manager_name
+FROM employee
+INNER JOIN role ON employee.role_id=role.role_id
+INNER JOIN department ON role.department_id=department.department_id
+INNER JOIN manager ON employee.manager_id=manager.manager_id
 
 
 
