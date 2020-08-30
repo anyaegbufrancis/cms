@@ -4,6 +4,7 @@
   "description": "",
   "main": "cms.js",
   "scripts": {
+    "start": "node cms.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "nodemon cms.js"
   },
