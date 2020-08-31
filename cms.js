@@ -28,6 +28,7 @@ connection.connect(function (err) {
 //Main Inquirer Entry Point. Breaks prompts into blocks.
 function mainEnteryPoint() {
   inquirer
+  //Main Block of Questions
     .prompt([
       {
         name: "data",
@@ -43,6 +44,8 @@ function mainEnteryPoint() {
           "EXIT",
         ],
       },
+      
+      //Employee, Roles, Managers & Department Entry Point Questions
       {
         name: "data",
         type: "list",
@@ -52,6 +55,7 @@ function mainEnteryPoint() {
         choices: ["Employee Details", "Roles, Managers or Departments"],
       },
 
+      //Employee specific Questions
       {
         name: "data",
         type: "list",
@@ -64,7 +68,8 @@ function mainEnteryPoint() {
           "Employees by Job Title",
         ],
       },
-
+      
+      //Non Employee Specific Questions
       {
         name: "data",
         type: "list",
@@ -73,10 +78,12 @@ function mainEnteryPoint() {
         choices: ["View ALL Roles", "View ALL Departments", "View ALL Managers"],
       },
     ])
-
-    .then(function (answer) {
+    
+    //Capture each first level response. Some final level questions passed to function level inquirer
+    .then( answer => {
       switch (answer.data) {
-        // Block Query No 1 Begins
+        // Block Query No 1 (Employees, Roles, Managers & Department) Cases Begins
+        //Each Final respons calls relevant function
         case "ALL Employee Details":
           employeeView();
           break;
@@ -104,7 +111,8 @@ function mainEnteryPoint() {
         case "Manager":
           allManagers();
           break;
-        // Block Query No 1 Ends.....//
+        // Block Query No 1 (Employees, Roles, Managers & Department) Cases Ends Here
+        
         //*******Add Cases Begins** */
         case "Update Employee Manager":
           updateManager();
@@ -121,15 +129,15 @@ function mainEnteryPoint() {
     });
 }
 
-function employeeView() {
+//Function that Queries Employee database
+ employeeView= () => {
   console.table("Building output...\n");
-  var query =
-    "SELECT employee_id ID, first_name 'First Name', last_name 'Last Name', job_title 'Title', department_name 'Department', salary 'Salary', manager_name 'Manager' ";
+  let query = "SELECT employee_id ID, first_name 'First Name', last_name 'Last Name', job_title 'Title', department_name 'Department', salary 'Salary', manager_name 'Manager' ";
   query += "FROM employee ";
   query += "INNER JOIN role ON employee.role_id=role.role_id ";
   query += "INNER JOIN department ON role.department_id=department.department_id ";
   query += "INNER join manager on employee.manager_id=manager.manager_id ";
-  console.log("\n*********************************[ LIST OF EMPLOYEES ]********************************\n".yellow
+  console.log("\n*********************************[ LIST OF ALL EMPLOYEES DETAILS]********************************\n".yellow
   );
   
   connection.query(query, function (err, res) {
@@ -156,6 +164,7 @@ function employeeByDepartment() {
         message: "What Department Employees do you want to view?".red,
         choices: departmentArray
       } 
+      
     ])
     connection.end();
     })   
