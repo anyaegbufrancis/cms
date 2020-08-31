@@ -159,8 +159,9 @@ employeeByDepartment = () => {
   );   
   connection.query(query, function (err, res) {
     if (err) throw err;
-    //Use ES6 map to extract department_name array
-      let departmentArray = res.map(res => res["department_name"]);   
+    //Use ES6 filter to extract department_name array
+      let departmentArray = res.map(res => res["department_name"]);  
+      //console.log(departmentArray) 
     inquirer.prompt([
       {
         name: "dept",
@@ -173,6 +174,21 @@ employeeByDepartment = () => {
       switch (answer.dept) {
         case answer.dept:
           //function to return matching users here
+          console.table("\nBuilding output...\n".green);
+          let query = "SELECT first_name 'First Name', last_name 'Last Name' ";
+          query += "FROM employee ";
+          query += "INNER JOIN role ON employee.role_id=role.role_id ";
+          query += "INNER JOIN department ON role.department_id=department.department_id ";
+          query += "where department_name='Engineering' ";
+          console.log("\n*********************************[ LIST OF ALL EMPLOYEES DETAILS]********************************\n".yellow
+          );          
+          //Print Response to terminal table
+          connection.query(query,  (err, res) => {
+            if (err) throw err;
+            console.table(res);
+            // runSearch()
+            connection.end();
+          });
           break;
       }
       
