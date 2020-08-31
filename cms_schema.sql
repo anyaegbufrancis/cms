@@ -5,6 +5,7 @@ CREATE TABLE employee (
   employee_id int AUTO_INCREMENT NOT NULL,
   first_name varchar(30) NOT NULL,
   last_name varchar(30) NOT NULL,
+  manager_name varchar(30) NOT NULL,
   PRIMARY KEY(employee_id)
 );
 CREATE TABLE department (

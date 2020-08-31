@@ -25,7 +25,6 @@ SELECT employee_id, first_name, last_name, job_title, department_name, salary, m
 FROM employee
 INNER JOIN role ON employee.role_id=role.role_id
 INNER JOIN department ON role.department_id=department.department_id
-INNER JOIN manager ON employee.manager_id=manager.manager_id
 
 --Query Employees by Department--
 SELECT first_name 'First Name', last_name 'Last Name'
