@@ -1,10 +1,12 @@
+//Dependencies
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 const cTable = require("console.table");
 const colors = require("colors");
 
+//Set up SQL connection
 var connection = mysql.createConnection({
-  host: "localhost",
+  host: "127.0.0.1",
 
   // Your port; if not 3306
   port: 3306,
@@ -20,10 +22,11 @@ var connection = mysql.createConnection({
 connection.connect(function (err) {
   if (err) throw err;
   console.log("connected as id " + connection.threadId + "\n");
-  runSearch();
+  mainEnteryPoint();
 });
 
-function runSearch() {
+//Main Inquirer Entry Point. Breaks prompts into blocks.
+function mainEnteryPoint() {
   inquirer
     .prompt([
       {
@@ -55,7 +58,7 @@ function runSearch() {
         message: "What Employee data do you want to view?",
         when: (response) => response.data === "Employee Details",
         choices: [
-          "ALL Employees",
+          "ALL Employee Details",
           "Employees by Department",
           "Employees by Manager",
           "Employees by Job Title",
@@ -74,7 +77,7 @@ function runSearch() {
     .then(function (answer) {
       switch (answer.data) {
         // Block Query No 1 Begins
-        case "ALL Employees":
+        case "ALL Employee Details":
           employeeView();
           break;
 
@@ -145,8 +148,7 @@ function employeeByDepartment() {
   );   
   connection.query(query, function (err, res) {
     if (err) throw err;
-      let departmentArray = res.map(res => res["department_name"])
-     // console.log(departmentArray)      
+      let departmentArray = res.map(res => res["department_name"]);   
     inquirer.prompt([
       {
         name: "dept",
