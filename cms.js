@@ -131,7 +131,7 @@ function mainEnteryPoint() {
 
 //Function that Queries Employee database
  employeeView= () => {
-  console.table("Building output...\n");
+  console.table("\nBuilding output...\n".green);
   let query = "SELECT employee_id ID, first_name 'First Name', last_name 'Last Name', job_title 'Title', department_name 'Department', salary 'Salary', manager_name 'Manager' ";
   query += "FROM employee ";
   query += "INNER JOIN role ON employee.role_id=role.role_id ";
@@ -140,7 +140,8 @@ function mainEnteryPoint() {
   console.log("\n*********************************[ LIST OF ALL EMPLOYEES DETAILS]********************************\n".yellow
   );
   
-  connection.query(query, function (err, res) {
+  //Print Response to terminal table
+  connection.query(query,  (err, res) => {
     if (err) throw err;
     console.table(res);
     // runSearch()
@@ -148,24 +149,34 @@ function mainEnteryPoint() {
   });
 }
 
-function employeeByDepartment() {
-  console.table("Building output...\n");
+//Function that queries existing Department names, return them to inquirer prompt 
+//and use user's selection to generate employees in that department.
+employeeByDepartment = () => {
+  console.log("\nBuilding output...\n".green);
   var query = "SELECT department_name from department"
   console.log(
-    "\n*********************************[ EMPLOYEES BY DEPARTMENT ]********************************\n".yellow
+    "\n*********************************[ PRESENT LISTED DEPARTMENTS ]********************************\n".yellow
   );   
   connection.query(query, function (err, res) {
     if (err) throw err;
+    //Use ES6 map to extract department_name array
       let departmentArray = res.map(res => res["department_name"]);   
     inquirer.prompt([
       {
         name: "dept",
         type: "list",
         message: "What Department Employees do you want to view?".red,
+        //Parses department name array to prompt
         choices: departmentArray
-      } 
+      }      
+    ]) .then( answer => {
+      switch (answer.dept) {
+        case answer.dept:
+          //function to return matching users here
+          break;
+      }
       
-    ])
+    })
     connection.end();
     })   
   };
