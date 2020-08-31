@@ -100,15 +100,15 @@ function mainEnteryPoint() {
           viewJobTitle();
           break;
 
-        case "Roles":
+        case "View ALL Roles":
           allRoles();
           break;
 
-        case "Department":
+        case "View ALL Department":
           addDepartments();
           break;
 
-        case "Manager":
+        case "View ALL Managers":
           allManagers();
           break;
         // Block Query No 1 (Employees, Roles, Managers & Department) Cases Ends Here
@@ -135,8 +135,7 @@ function mainEnteryPoint() {
   let query = "SELECT employee_id ID, first_name 'First Name', last_name 'Last Name', job_title 'Title', department_name 'Department', salary 'Salary', manager_name 'Manager' ";
   query += "FROM employee ";
   query += "INNER JOIN role ON employee.role_id=role.role_id ";
-  query += "INNER JOIN department ON role.department_id=department.department_id ";
-  query += "INNER join manager on employee.manager_id=manager.manager_id ";
+  query += "INNER JOIN department ON role.department_id = department.department_id ";
   console.log("\n*********************************[ LIST OF ALL EMPLOYEES DETAILS]********************************\n".yellow
   );
   
@@ -173,7 +172,7 @@ employeeByDepartment = () => {
           let query = "SELECT first_name 'First Name', last_name 'Last Name' ";
           query += "FROM employee ";
           query += "INNER JOIN role ON employee.role_id=role.role_id ";
-          query += "INNER JOIN department ON role.department_id=department.department_id ";
+          query += "INNER JOIN department ON role.department_id = department.department_id ";
           query += "WHERE department_name=" + "'" + answer.dept + "'";
           console.log("\n***************************[ LIST EMPLOYEES IN ".yellow + colors.green(answer.dept) + " DEPARTMENT]***************************\n".yellow
           );          
@@ -193,7 +192,7 @@ employeeByDepartment = () => {
 //and use user's selection to generate employees under the Manager's Leadership.
 employeeByManager = () => {
   console.log("\nBuilding output...\n".green);
-  var query = "SELECT manager_name FROM manager" 
+  var query = "SELECT manager_name FROM employee" 
   connection.query(query, function (err, res) {
     if (err) throw err;
     //Use ES6 filter to extract department_name array
@@ -212,7 +211,6 @@ employeeByManager = () => {
           console.table("\nBuilding output...\n".green);
           let query = "SELECT first_name 'First Name', last_name 'Last Name' ";
           query += "FROM employee ";
-          query += "INNER JOIN manager ON employee.manager_id=manager.manager_id ";
           query += "WHERE manager_name=" + "'" + answer.dept + "'";
           console.log("\n***************************[ LIST EMPLOYEES MANAGER BY ".yellow + colors.green(answer.dept) + " ]***************************\n".yellow
           );          
@@ -226,6 +224,76 @@ employeeByManager = () => {
     })
     })   
   };
+
+//Function that queries existing Manager names, return them to inquirer prompt 
+//and use user's selection to generate employees under the Manager's Leadership.
+viewJobTitle = () => {
+  console.log("\nBuilding output...\n".green);
+  let query = "SELECT job_title FROM role" 
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    //Use ES6 filter to extract department_name array
+      let jobTitleArray = res.map(res => res["job_title"]);  
+      //console.log(jobTitleArrayArray) 
+    inquirer.prompt([
+      {
+        name: "dept",
+        type: "list",
+        message: "Which Job Title do you want present Employees",
+        //Parses department name array to prompt
+        choices: jobTitleArray
+      }      
+    ]) .then( answer => {
+          //function to return matching users here
+          console.table("\nBuilding output...\n".green);
+          let query = "SELECT first_name 'First Name', last_name 'Last Name' ";
+          query += "FROM employee ";
+          query += "INNER JOIN role ON employee.role_id = role.role_id ";
+          query += "WHERE job_title=" + "'" + answer.dept + "'";
+          console.log("\n***************************[ LIST EMPLOYEES WITH JOB TITLE ".yellow + colors.green(answer.dept) + " ]***************************\n".yellow
+          );          
+          //Print Response to terminal table
+          connection.query(query,  (err, res) => {
+            if (err) throw err;
+            console.table(res);
+            // runSearch()
+            connection.end();
+          });
+    })
+    })   
+  };
+
+//Function that queries existing Roles, and returns a list of all existing roles
+allRoles = () => {
+  console.log("\nBuilding output...\n".green);
+  let query = "SELECT role_id 'ID', job_title 'Job Title'  FROM role" 
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    //Use ES6 filter to extract department_name array  
+      console.log("\n***************************[ LIST OF ALL EXISTING ROLES]***************************\n".yellow
+      );
+      console.table(res)
+      connection.end();
+    })  
+  };
+
+//Function that queries existing Roles, and returns a list of all existing roles
+allManagers = () => {
+  console.log("\nBuilding output...\n".green);
+  let query = "SELECT manager_name 'Manager Names(s)' " 
+      query += "FROM employee ";
+      query += "WHERE manager_name <> '' | 'None'";
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    //Use ES6 filter to extract department_name array  
+      console.log("\n***************************[ LIST OF ALL MANAGERS]***************************\n".yellow
+      );
+      console.table(res)
+      connection.end();
+    })  
+  };
+
+
 
 
 
