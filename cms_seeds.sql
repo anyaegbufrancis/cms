@@ -35,6 +35,15 @@ INNER JOIN department ON role.department_id=department.department_id
 where department_name='Engineering'
 
 
+--Query Employees by Manager
+SELECT first_name 'First Name', last_name 'Last Name'
+FROM employee
+INNER JOIN manager ON employee.manager_id=manager.manager_id
+WHERE manager_name = 'Anyaegbu Ifesinachi'
+
+
+
+
 
 
 
