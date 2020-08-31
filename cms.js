@@ -36,11 +36,9 @@ function mainEnteryPoint() {
         message: "What would you like to do?",
         choices: [
           "View Employees, Roles, Departments or Managers",
-          "Add Employee, Roles, Departments or Managers",
-          "Update Employee Role",
-          "Update Employee Manager",
-          "Remove Employee",
-          "Remove Roles",
+          "Add Employee, Roles, Departments",
+          "Update Employee Details",
+          "Remove Employee, Department or Roles",
           "EXIT",
         ],
       },
@@ -77,6 +75,16 @@ function mainEnteryPoint() {
         when: (response) => response.data === "Roles, Managers or Departments",
         choices: ["View ALL Roles", "View ALL Departments", "View ALL Managers"],
       },
+      
+       //Employee, Roles, Managers & Department Entry Point Questions
+       {
+        name: "data",
+        type: "list",
+        message: "What new entity do you want to add?",
+        when: (response) =>
+          response.data === "Add Employee, Roles, Departments",
+        choices: ["Add New Employee", "Add New Role", "Add New Department"],
+      },
     ])
     
     //Capture each first level response. Some final level questions passed to function level inquirer
@@ -104,8 +112,8 @@ function mainEnteryPoint() {
           allRoles();
           break;
 
-        case "View ALL Department":
-          addDepartments();
+        case "View ALL Departments":
+          allDepartments();
           break;
 
         case "View ALL Managers":
@@ -113,17 +121,19 @@ function mainEnteryPoint() {
           break;
         // Block Query No 1 (Employees, Roles, Managers & Department) Cases Ends Here
         
-        //*******Add Cases Begins** */
-        case "Update Employee Manager":
-          updateManager();
+        //*****************************************************************************//
+        
+        //Block Query No 2 (Add Cases Begins) Cases Begins Here
+        case "Add New Employee":
+          addNewEmployee();
           break;
 
-        case "Remove Employee":
-          removeEmployee();
+        case "Add New Role":
+          addNewRole();
           break;
 
-        case "Remove Roles":
-          removeRoles();
+        case "Add New Department":
+          addNewDepartment();
           break;
       }
     });
@@ -192,7 +202,9 @@ employeeByDepartment = () => {
 //and use user's selection to generate employees under the Manager's Leadership.
 employeeByManager = () => {
   console.log("\nBuilding output...\n".green);
-  var query = "SELECT manager_name FROM employee" 
+  //var query = "SELECT manager_name FROM employee" 
+  let query = "SELECT manager_name FROM employee ";
+      query += "WHERE manager_name != 'None' AND manager_name != ''";
   connection.query(query, function (err, res) {
     if (err) throw err;
     //Use ES6 filter to extract department_name array
@@ -225,8 +237,8 @@ employeeByManager = () => {
     })   
   };
 
-//Function that queries existing Manager names, return them to inquirer prompt 
-//and use user's selection to generate employees under the Manager's Leadership.
+//Function that queries existing Job Roles, return them to inquirer prompt 
+//and use user's selection to generate Employees Under the selected job title.
 viewJobTitle = () => {
   console.log("\nBuilding output...\n".green);
   let query = "SELECT job_title FROM role" 
@@ -277,12 +289,12 @@ allRoles = () => {
     })  
   };
 
-//Function that queries existing Roles, and returns a list of all existing roles
+//Function that queries existing Managers and returns a list of all Managers
 allManagers = () => {
   console.log("\nBuilding output...\n".green);
-  let query = "SELECT manager_name 'Manager Names(s)' " 
+  let query = "SELECT employee_id 'ID', manager_name 'Manager Names(s)' " 
       query += "FROM employee ";
-      query += "WHERE manager_name <> '' | 'None'";
+      query += "WHERE manager_name != 'None' AND manager_name != ''";
   connection.query(query, function (err, res) {
     if (err) throw err;
     //Use ES6 filter to extract department_name array  
@@ -293,7 +305,71 @@ allManagers = () => {
     })  
   };
 
+//Function that queries ALL Departments, and returns a list of all existing departments
+allDepartments = () => {
+  console.log("\nBuilding output...\n".green);
+  let query = "SELECT department_id 'ID', department_name 'Department Name(s)' " 
+      query += "FROM department ";
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+      console.log("\n***************************[ LIST OF ALL DEPARTMENTS]***************************\n".yellow
+      );
+      console.table(res)
+      connection.end();
+    })  
+  };
 
+//**************************************************************************************************************** */
+
+//Add New Employee Functions
+
+addNewEmployee = () => {  
+  let query = "SELECT manager_name " 
+  query += "FROM employee ";
+  query += "WHERE manager_name != 'None' AND manager_name != ''";
+connection.query(query, function (err, res) {
+if (err) throw err;
+    //console.log(jobTitleArrayArray)
+    console.log(res) 
+    let managerArray = res.map(res => res["manager_name"])
+    inquirer.prompt([
+      {
+        name: "first_name",
+        type: "input",
+        message: "Employee First Name: "
+      },
+      {
+        name: "last_name",
+        type: "input",
+        message: "Employee Last Name Name: "
+      },
+      {
+        name: "manager",
+        type: "list",
+        message: "Select Manager: ",
+        //Parses department name array to prompt
+        choices: managerArray
+      }             
+      
+    ]) .then( answer => {
+          //function to return matching users here
+          console.table("\nBuilding output...\n".green);
+          let query = "SELECT first_name 'First Name', last_name 'Last Name' ";
+          query += "FROM employee ";
+          query += "INNER JOIN role ON employee.role_id = role.role_id ";
+          query += "WHERE job_title=" + "'" + answer.dept + "'";
+          console.log("\n***************************[ LIST EMPLOYEES WITH JOB TITLE ".yellow + colors.green(answer.dept) + " ]***************************\n".yellow
+          );          
+          //Print Response to terminal table
+          connection.query(query,  (err, res) => {
+            if (err) throw err;
+            console.table(res);
+            // runSearch()
+            connection.end();
+          });
+    })
+    })}
+  
 
 
 
