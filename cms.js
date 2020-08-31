@@ -324,15 +324,32 @@ allDepartments = () => {
 //Add New Employee Functions
 addNewEmployee = () => {  
   //SQL Query to return Managers ONLY
-  let query = "SELECT manager_name " 
+  let query = "SELECT job_title, department_name, manager_name " 
   query += "FROM employee ";
-  query += "WHERE manager_name != 'None'";
+  query += "INNER JOIN role ON employee.role_id=role.role_id ";
+  query += "INNER JOIN department ON role.department_id=department.department_id ";
 connection.query(query, function (err, res) {
 if (err) throw err;
 //Sort Array to return only values for manager_name in Array
-    const managerArray = res.map(res => res["manager_name"])
+    let  managerArray = res.map(res => res["manager_name"])
+    //Remove duplicate Manager Name
+    managerArray = [...new Set(managerArray)]
+   // console.log(managerArray)
     //Add 'None' to the Array
     managerArray.push('Add Manager', 'None')
+    
+//Sort Array to return only values for manager_name in Array
+let  jobTitleArray = res.map(res => res["job_title"])
+//Remove duplicate Job Titles
+jobTitleArray = [...new Set(jobTitleArray)]
+//Add 'Add' Option to the Array
+jobTitleArray.push('Add Job Title')
+//console.log(jobTitleArray)
+
+//Find the Department for the matching job title 
+let department = res.find(x => x.job_title === "Lead Engineer")
+department = department.department_name
+
     //Call inquirer prompt to receive user parameters
     inquirer.prompt([
       {
@@ -350,8 +367,13 @@ if (err) throw err;
         type: "list",
         message: "Select Employee job title (Please select 'None' Employee without a Manager): ",
         //Parses Existing Manager names array to prompt
-        choices: managerArray
-      },     
+        choices: jobTitleArray
+      }, 
+      {
+        name: "salary",
+        type: "input",
+        message: "Employee Salary(format: 5000): "
+      },    
       {
         name: "manager_name",
         type: "list",
@@ -362,14 +384,18 @@ if (err) throw err;
       
     ]) .then( answer => {
           //Switch cases for employee add.
-          switch (answer.data) {
+          switch (answer) {
             //First case to add new
             case "Add Manager":
               //employeeView();
               break;
+            case "Add Title":
+            //employeeView();
+            break;
     
             default:
-              employeeByDepartment();
+              console.log(answer);
+              
               break;
           } 
           console.table("\nBuilding output...\n".green);
