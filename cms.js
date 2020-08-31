@@ -322,16 +322,18 @@ allDepartments = () => {
 //**************************************************************************************************************** */
 
 //Add New Employee Functions
-
 addNewEmployee = () => {  
+  //SQL Query to return Managers ONLY
   let query = "SELECT manager_name " 
   query += "FROM employee ";
-  query += "WHERE manager_name != 'None' AND manager_name != ''";
+  query += "WHERE manager_name != 'None'";
 connection.query(query, function (err, res) {
 if (err) throw err;
-    //console.log(jobTitleArrayArray)
-    console.log(res) 
-    let managerArray = res.map(res => res["manager_name"])
+//Sort Array to return only values for manager_name in Array
+    const managerArray = res.map(res => res["manager_name"])
+    //Add 'None' to the Array
+    managerArray.push('Add Manager', 'None')
+    //Call inquirer prompt to receive user parameters
     inquirer.prompt([
       {
         name: "first_name",
@@ -344,15 +346,32 @@ if (err) throw err;
         message: "Employee Last Name Name: "
       },
       {
-        name: "manager",
+        name: "job_title",
         type: "list",
-        message: "Select Manager: ",
-        //Parses department name array to prompt
+        message: "Select Employee job title (Please select 'None' Employee without a Manager): ",
+        //Parses Existing Manager names array to prompt
+        choices: managerArray
+      },     
+      {
+        name: "manager_name",
+        type: "list",
+        message: "Select Manager(Please select 'None' Employee without a Manager): ",
+        //Parses Existing Manager names array to prompt
         choices: managerArray
       }             
       
     ]) .then( answer => {
-          //function to return matching users here
+          //Switch cases for employee add.
+          switch (answer.data) {
+            //First case to add new
+            case "Add Manager":
+              //employeeView();
+              break;
+    
+            default:
+              employeeByDepartment();
+              break;
+          } 
           console.table("\nBuilding output...\n".green);
           let query = "SELECT first_name 'First Name', last_name 'Last Name' ";
           query += "FROM employee ";
