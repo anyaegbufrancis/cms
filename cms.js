@@ -27,7 +27,7 @@ function runSearch() {
   inquirer
     .prompt([
       {
-        name: "action",
+        name: "data",
         type: "list",
         message: "What would you like to do?",
         choices: [
@@ -41,19 +41,19 @@ function runSearch() {
         ],
       },
       {
-        name: "view",
+        name: "data",
         type: "list",
         message: "What do you like to view?",
         when: (response) =>
-          response.action === "View Employees, Roles, Departments or Managers",
+          response.data === "View Employees, Roles, Departments or Managers",
         choices: ["Employee Details", "Roles, Managers or Departments"],
       },
 
       {
-        name: "employee",
+        name: "data",
         type: "list",
         message: "What Employee data do you want to view?",
-        when: (response) => response.view === "Employee Details",
+        when: (response) => response.data === "Employee Details",
         choices: [
           "ALL Employees",
           "Employees by Department",
@@ -63,16 +63,16 @@ function runSearch() {
       },
 
       {
-        name: "rmd",
+        name: "data",
         type: "list",
         message: "Please select which data you like to view?",
-        when: (response) => response.view === "Roles, Managers or Departments",
-        choices: ["Roles", "Department", "Manager"],
+        when: (response) => response.data === "Roles, Managers or Departments",
+        choices: ["View ALL Roles", "View ALL Departments", "View ALL Managers"],
       },
     ])
 
     .then(function (answer) {
-      switch (answer.employee) {
+      switch (answer.data) {
         // Block Query No 1 Begins
         case "ALL Employees":
           employeeView();
@@ -124,12 +124,9 @@ function employeeView() {
     "SELECT employee_id ID, first_name 'First Name', last_name 'Last Name', job_title 'Title', department_name 'Department', salary 'Salary', manager_name 'Manager' ";
   query += "FROM employee ";
   query += "INNER JOIN role ON employee.role_id=role.role_id ";
-  query +=
-    "INNER JOIN department ON role.department_id=department.department_id ";
+  query += "INNER JOIN department ON role.department_id=department.department_id ";
   query += "INNER join manager on employee.manager_id=manager.manager_id ";
-  console.log(
-    "\n*********************************[ LIST OF EMPLOYEES ]********************************\n"
-      .yellow
+  console.log("\n*********************************[ LIST OF EMPLOYEES ]********************************\n".yellow
   );
   
   connection.query(query, function (err, res) {
@@ -142,22 +139,24 @@ function employeeView() {
 
 function employeeByDepartment() {
   console.table("Building output...\n");
-  var query =
-    "SELECT employee_id ID, first_name 'First Name', last_name 'Last Name', job_title 'Title', department_name 'Department', salary 'Salary', manager_name 'Manager' ";
-  query += "FROM employee ";
-  query += "INNER JOIN role ON employee.role_id=role.role_id ";
-  query +=
-    "INNER JOIN department ON role.department_id=department.department_id ";
-  query += "INNER join manager on employee.manager_id=manager.manager_id ";
+  var query = "SELECT department_name from department"
   console.log(
-    "\n*********************************[ LIST OF EMPLOYEES ]********************************\n"
-      .yellow
-  );
-  
+    "\n*********************************[ EMPLOYEES BY DEPARTMENT ]********************************\n".yellow
+  );   
   connection.query(query, function (err, res) {
     if (err) throw err;
-    console.table(res);
-    // runSearch()
+      let departmentArray = res.map(res => res["department_name"])
+     // console.log(departmentArray)      
+    inquirer.prompt([
+      {
+        name: "dept",
+        type: "list",
+        message: "What Department Employees do you want to view?".red,
+        choices: departmentArray
+      } 
+    ])
     connection.end();
-  });
-}
+    })   
+  };
+
+
