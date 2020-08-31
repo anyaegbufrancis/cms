@@ -154,9 +154,6 @@ function mainEnteryPoint() {
 employeeByDepartment = () => {
   console.log("\nBuilding output...\n".green);
   var query = "SELECT department_name from department"
-  // console.log(
-  //   "\n*********************************[ PRESENT LISTED DEPARTMENTS ]********************************\n".yellow
-  // );   
   connection.query(query, function (err, res) {
     if (err) throw err;
     //Use ES6 filter to extract department_name array
@@ -166,7 +163,7 @@ employeeByDepartment = () => {
       {
         name: "dept",
         type: "list",
-        message: "What Department Employees do you want to view?".red,
+        message: "What Department Employees do you want to view?",
         //Parses department name array to prompt
         choices: departmentArray
       }      
@@ -187,9 +184,49 @@ employeeByDepartment = () => {
             // runSearch()
             connection.end();
           });
-      
     })
     })   
   };
+
+
+//Function that queries existing Department names, return them to inquirer prompt 
+//and use user's selection to generate employees in that department.
+employeeByManager = () => {
+  console.log("\nBuilding output...\n".green);
+  var query = "SELECT manager_name from manager" 
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    //Use ES6 filter to extract department_name array
+      let managerArray = res.map(res => res["manager_name"]);  
+      //console.log(managerArrayArray) 
+    inquirer.prompt([
+      {
+        name: "dept",
+        type: "list",
+        message: "Which Manager do you want to see their Employees",
+        //Parses department name array to prompt
+        choices: managerArray
+      }      
+    ]) .then( answer => {
+          //function to return matching users here
+          console.table("\nBuilding output...\n".green);
+          let query = "SELECT first_name 'First Name', last_name 'Last Name' ";
+          query += "FROM employee ";
+          query += "INNER JOIN role ON employee.role_id=role.role_id ";
+          query += "INNER JOIN department ON role.department_id=department.department_id ";
+          query += "where department_name=" + "'" + answer.dept + "'";
+          console.log("\n***************************[ LIST EMPLOYEES IN ".yellow + colors.green(answer.dept) + " DEPARTMENT]***************************\n".yellow
+          );          
+          //Print Response to terminal table
+          connection.query(query,  (err, res) => {
+            if (err) throw err;
+            console.table(res);
+            // runSearch()
+            connection.end();
+          });
+    })
+    })   
+  };
+
 
 
