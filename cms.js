@@ -643,6 +643,65 @@ inquirer.prompt([
 })
   break; 
   
+  
+  //Case to cater for Employee Role update
+  case   "Employee Role":
+    let last_name_query = "SELECT first_name, last_name, job_title FROM employee ";
+        last_name_query += "INNER JOIN role ON role.role_id = employee.role_id "
+connection.query(last_name_query, function (err, res) {
+if (err) throw err;
+//Generate an Array of first names and Last Names 
+const employeesList = [];  
+for (let i=0; i<res.length; i++){
+(employeesList.push(res[i].first_name + " " + res[i].last_name))
+}
+//Generate an Array of Job Titles 
+const jobTitles = [];  
+for (let i=0; i<res.length; i++){
+(jobTitles.push(res[i].job_title))
+}
+//Call Inquirer to prompt for employee name selection
+inquirer.prompt([
+{
+ name: "name",
+ type: "list",
+ message: "Select EMPLOYEE you want to update their job title: ",
+ //Parses employee name array to prompt
+ choices: employeeView
+},   
+{
+  name: "name",
+  type: "list",
+  message: "Select NEW JOB TITLE of the employee: ",
+  //Parses employee name array to prompt
+  choices: jobTitles
+ }   
+]) .then( answer => {
+   //Receives the answer and split it into first name and last name
+   let splitWords = (answer.name).split(" ")
+   
+   //SQL Query that grabs employee ID that matches selected first name and last name
+   let query = "SELECT employee_id FROM employee WHERE first_name = '" + splitWords[0] +"'";
+       query += "AND last_name = '" + splitWords[1] + "'";  
+   connection.query(query,  (err, res) => {
+     if (err) throw err;    
+       
+    //Use inquirer received input to build a SQL update call
+     let query = "UPDATE employee SET last_name = '" + answer.name + "' WHERE employee_id = " + res[0].employee_id
+     connection.query(query,  (err, res) => {
+       if (err) throw err;
+       console.log("\n*************** User First Name Successfuly Updated! *****************\n".green)
+       employeeView()
+     })
+  
+   });
+})
+})
+break; 
+
+
+
+  
   }  
   })
 }
@@ -684,7 +743,7 @@ inquirer.prompt([
      ]) .then( answer => {
        
        //Use inquiere received input to build a SQL update call
-     let query = "UPDATE role SET role_name = '" + answer.name + "' WHERE role_id = " + res[0].role_id
+     let query = "UPDATE role SET job_title = '" + answer.name + "' WHERE role_id = " + res[0].role_id
      connection.query(query,  (err, res) => {
        if (err) throw err;
        console.log("\n*************** User First Name Successfuly Updated! *****************\n".green)
