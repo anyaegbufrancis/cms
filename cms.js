@@ -153,7 +153,6 @@ function mainEnteryPoint() {
   connection.query(query,  (err, res) => {
     if (err) throw err;
     console.table(res);
-    // runSearch()
     mainEnteryPoint()
   });
 }
@@ -190,7 +189,6 @@ employeeByDepartment = () => {
           connection.query(query,  (err, res) => {
             if (err) throw err;
             console.table(res);
-            // runSearch()
             mainEnteryPoint()
           });
     })
@@ -230,7 +228,6 @@ employeeByManager = () => {
           connection.query(query,  (err, res) => {
             if (err) throw err;
             console.table(res);
-            // runSearch()
             mainEnteryPoint()
           });
     })
@@ -336,14 +333,14 @@ if (err) throw err;
     managerArray = [...new Set(managerArray)]
    // console.log(managerArray)
     //Add 'None' to the Array
-    managerArray.push('Add Manager', 'None')
+    managerArray.push('None')
     
 //Sort Array to return only values for manager_name in Array
 let  jobTitleArray = res.map(res => res["job_title"])
 //Remove duplicate Job Titles
 jobTitleArray = [...new Set(jobTitleArray)]
 //Add 'Add' Option to the Array
-jobTitleArray.push('Add Job Title')
+//jobTitleArray.push('Add Job Title')
 //console.log(jobTitleArray)
 
     //Call inquirer prompt to receive user parameters
@@ -368,7 +365,7 @@ jobTitleArray.push('Add Job Title')
       {
         name: "manager_name",
         type: "list",
-        message: "Select Manager(Please select 'None' Employee without a Manager): ",
+        message: "Select Manager(Please select 'None' for Employee without a Manager): ",
         //Parses Existing Manager names array to prompt
         choices: managerArray
       }             
@@ -376,14 +373,6 @@ jobTitleArray.push('Add Job Title')
     ]) .then( answer => {
           //Switch cases for employee add.
           switch (answer) {
-            //First case to add new
-            case "Add Manager":
-              //employeeView();
-              break;
-            case "Add Title":
-            //employeeView();
-            break;
-    
             default:
             //Query Database for the role ID of the selected Job Title
               let findRoleID = "SELECT role_id FROM role WHERE job_title = " + "'"+ answer.job_title + "'";
@@ -399,12 +388,11 @@ jobTitleArray.push('Add Job Title')
               connection.query(query,  (err, res) => {
                 if (err) throw err;
                 console.log("\n*************** Employee Database Successfuly Updated! *****************\n".green);
-                // Display 
+                // Return to Main Menu 
                 employeeView()
-                mainEnteryPoint()
               });   
             })           
-              break;
+            break;
           } 
     })
     })}
@@ -500,8 +488,8 @@ addNewDepartment = () => {
             default:
             
               //Pass department Name value to SQL Query to populate department database      
-              let query = "INSERT INTO department (department_name) ";
-                  query += "VALUES ( '" + answer.department_name + "'" +answer.department_id +"');" 
+              let query = "INSERT INTO department (department_id, department_name) ";
+                  query += "VALUES (" +answer.department_id + ", '" + answer.department_name+ "')" 
                    
               //Throw error or report successful update
               connection.query(query,  (err, res) => {
