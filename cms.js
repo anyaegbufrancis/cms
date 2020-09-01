@@ -346,10 +346,6 @@ jobTitleArray = [...new Set(jobTitleArray)]
 jobTitleArray.push('Add Job Title')
 //console.log(jobTitleArray)
 
-//Find the Department for the matching job title 
-let department = res.find(x => x.job_title === "Lead Engineer")
-department = department.department_name
-
     //Call inquirer prompt to receive user parameters
     inquirer.prompt([
       {
@@ -360,7 +356,7 @@ department = department.department_name
       {
         name: "last_name",
         type: "input",
-        message: "Employee Last Name Name: "
+        message: "Employee Last Name: "
       },
       {
         name: "job_title",
@@ -368,12 +364,7 @@ department = department.department_name
         message: "Select Employee job title (Please select 'None' Employee without a Manager): ",
         //Parses Existing Manager names array to prompt
         choices: jobTitleArray
-      }, 
-      // {
-      //   name: "salary",
-      //   type: "input",
-      //   message: "Employee Salary(format: 5000): "
-      // },    
+      },  
       {
         name: "manager_name",
         type: "list",
@@ -465,18 +456,20 @@ if (err) throw err;
               let departmentID = "SELECT department_id FROM department WHERE department_name = " + "'"+ answer.department_name + "'";
                   connection.query(departmentID,  (err, res) => {
                     if (err) throw err;
-                    let  role_id = res.map(res => res["department_id"])
+                    console.log(res)
+                    let  department_id = res.map(res => res["department_id"])
+                    console.log(department_id)
                     
               //Pass department ID value to next SQL Query to populate role database      
               let query = "INSERT INTO role (job_title, salary, department_id) ";
-                  query += "VALUES ( '" + answer.job_title + "', '"+ answer.salary + "', '" + department_ID + "');" 
+                  query += "VALUES ( '" + answer.job_title + "', "+ answer.salary + ", " + department_id + ");" 
                    
               //Throw error or report successful update
               connection.query(query,  (err, res) => {
                 if (err) throw err;
                 console.log("\n*************** Role Database Successfuly Updated! *****************\n".green);
                 // Display 
-                allDepartments()
+                allDepartment()
                 mainEnteryPoint()
               });   
             })           
@@ -484,6 +477,44 @@ if (err) throw err;
           } 
     })
     })}
+
+//Add New Department
+addNewDepartment = () => { 
+                          
+    //Call inquirer prompt to receive user parameters
+    inquirer.prompt([
+      {
+        name: "department_name",
+        type: "input",
+        message: "New Department Name: "
+      },  
+      {
+        name: "department_id",
+        type: "input",
+        message: "New Department ID (Identify each Department by ID): "
+      },    
+    ]) .then( answer => {
+      
+          //Switch cases for employee add.
+          switch (answer) {   
+            default:
+            
+              //Pass department Name value to SQL Query to populate department database      
+              let query = "INSERT INTO department (department_name) ";
+                  query += "VALUES ( '" + answer.department_name + "'" +answer.department_id +"');" 
+                   
+              //Throw error or report successful update
+              connection.query(query,  (err, res) => {
+                if (err) throw err;
+                console.log("\n*************** Department Database Successfuly Updated! *****************\n".green);
+                // Display 
+                allDepartments()
+                mainEnteryPoint()
+              });   
+            }
+    })
+  }
+  
   
   
 
