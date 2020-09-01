@@ -646,15 +646,16 @@ inquirer.prompt([
   
   //Case to cater for Employee Role update
   case   "Employee Role":
-    let last_name_query = "SELECT first_name, last_name, job_title FROM employee ";
-        last_name_query += "INNER JOIN role ON role.role_id = employee.role_id "
-connection.query(last_name_query, function (err, res) {
+    let name_query = "SELECT first_name, last_name, job_title FROM employee ";
+        name_query += "INNER JOIN role ON role.role_id = employee.role_id "
+connection.query(name_query, function (err, res) {
 if (err) throw err;
 //Generate an Array of first names and Last Names 
 const employeesList = [];  
 for (let i=0; i<res.length; i++){
 (employeesList.push(res[i].first_name + " " + res[i].last_name))
 }
+
 //Generate an Array of Job Titles 
 const jobTitles = [];  
 for (let i=0; i<res.length; i++){
@@ -667,10 +668,10 @@ inquirer.prompt([
  type: "list",
  message: "Select EMPLOYEE you want to update their job title: ",
  //Parses employee name array to prompt
- choices: employeeView
+ choices: employeesList
 },   
 {
-  name: "name",
+  name: "title",
   type: "list",
   message: "Select NEW JOB TITLE of the employee: ",
   //Parses employee name array to prompt
@@ -679,19 +680,20 @@ inquirer.prompt([
 ]) .then( answer => {
    //Receives the answer and split it into first name and last name
    let splitWords = (answer.name).split(" ")
-   
+   console.log(answer.name)
    //SQL Query that grabs employee ID that matches selected first name and last name
-   let query = "SELECT employee_id FROM employee WHERE first_name = '" + splitWords[0] +"'";
-       query += "AND last_name = '" + splitWords[1] + "'";  
+   let query = "SELECT role_id, employee_id FROM employee WHERE first_name = '" + splitWords[0] +" '";
+       query += " AND last_name = '" + splitWords[1] + " '"; 
+       query += "INNER JOIN role ON employee.employee_id = role.role_id" 
    connection.query(query,  (err, res) => {
      if (err) throw err;    
-       
+       console.log(res)
     //Use inquirer received input to build a SQL update call
-     let query = "UPDATE employee SET last_name = '" + answer.name + "' WHERE employee_id = " + res[0].employee_id
+     let query = "UPDATE employee SET role_id = '" + 'ROLE ID OF SELECTED ROLE' + "' WHERE employee_id = " + res[0].employee_id
      connection.query(query,  (err, res) => {
        if (err) throw err;
        console.log("\n*************** User First Name Successfuly Updated! *****************\n".green)
-       employeeView()
+       //employeeView()
      })
   
    });
