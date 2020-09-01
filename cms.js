@@ -323,11 +323,11 @@ allDepartments = () => {
 
 //Add New Employee Functions
 addNewEmployee = () => {  
-  //SQL Query to return Managers ONLY
-  let query = "SELECT job_title, department_name, manager_name " 
-  query += "FROM employee ";
-  query += "INNER JOIN role ON employee.role_id=role.role_id ";
-  query += "INNER JOIN department ON role.department_id=department.department_id ";
+  //SQL Query to return job_title, department_name and manager_names.
+  let query = "SELECT job_title, department_name, manager_name "; 
+      query += "FROM employee ";
+      query += "INNER JOIN role ON employee.role_id=role.role_id ";
+      query += "INNER JOIN department ON role.department_id=department.department_id ";
 connection.query(query, function (err, res) {
 if (err) throw err;
 //Sort Array to return only values for manager_name in Array
@@ -369,11 +369,11 @@ department = department.department_name
         //Parses Existing Manager names array to prompt
         choices: jobTitleArray
       }, 
-      {
-        name: "salary",
-        type: "input",
-        message: "Employee Salary(format: 5000): "
-      },    
+      // {
+      //   name: "salary",
+      //   type: "input",
+      //   message: "Employee Salary(format: 5000): "
+      // },    
       {
         name: "manager_name",
         type: "list",
@@ -395,6 +395,13 @@ department = department.department_name
     
             default:
               console.log(answer);
+              console.log(role_Name)
+              let findRoleID = "USE cms_db ";
+                  findRoleID += "SELECT role_id FROM role WHERE role_name = " + answer.job_title;
+                  connection.query(findRoleID,  (err, res) => {
+                    if (err) throw err;
+                    console.log(res)
+                  })                    
               let query = "USE cms_db ";
                   query += "INSERT INTO employee (first_name, last_name, role_id, manager_name) ";
                   query += "VALUES ( " + answer.first_name + ", " + answer.last_name + ", " + role_id + "," + answer.manager_name+");"  
