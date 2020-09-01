@@ -146,7 +146,7 @@ function mainEnteryPoint() {
   query += "FROM employee ";
   query += "INNER JOIN role ON employee.role_id=role.role_id ";
   query += "INNER JOIN department ON role.department_id = department.department_id ";
-  console.log("\n*********************************[ LIST OF ALL EMPLOYEES DETAILS]********************************\n".yellow
+  console.log("\n*********************************[ UPDATED LIST OF ALL EMPLOYEES DETAILS]********************************\n".yellow
   );
   
   //Print Response to terminal table
@@ -394,25 +394,24 @@ department = department.department_name
             break;
     
             default:
-              console.log(answer);
-              let role_id;
+            //Query Database for the role ID of the selected Job Title
               let findRoleID = "SELECT role_id FROM role WHERE job_title = " + "'"+ answer.job_title + "'";
                   connection.query(findRoleID,  (err, res) => {
                     if (err) throw err;
-                    role_id = res.role_id[0]
-                    consolelog(role_id[0])
-                    return role_id
-                  })                    
-              let query = "USE cms_db ";
-                  query += "INSERT INTO employee (first_name, last_name, role_id, manager_name) ";
-                  query += "VALUES ( " + answer.first_name + ", " + answer.last_name + ", " + role_id + "," + answer.manager_name+");"  
-              //Print Response to terminal table
+                    let  role_id = res.map(res => res["role_id"])
+                    
+              //Pass role ID value to next SQL Query to populate employee database      
+              let query = "INSERT INTO employee (first_name, last_name, role_id, manager_name) ";
+                  query += "VALUES ( '" + answer.first_name + "', '"+ answer.last_name + "', " + role_id + ", '" + answer.manager_name+"');" 
+                   
+              //Throw error or report successful update
               connection.query(query,  (err, res) => {
                 if (err) throw err;
-                console.log("\n*************** LIST EMPLOYEES WITH JOB TITLE*****************\n".green);
-                // runSearch()
-                connection.end();
-              });              
+                console.log("\n*************** Employee Database Successfuly Updated! *****************\n".green);
+                // Display 
+                employeeView()
+              });   
+            })           
               break;
           } 
     })
