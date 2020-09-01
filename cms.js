@@ -395,23 +395,18 @@ department = department.department_name
     
             default:
               console.log(answer);
-              
+              let query = "USE cms_db ";
+                  query += "INSERT INTO employee (first_name, last_name, role_id, manager_name) ";
+                  query += "VALUES ( " + answer.first_name + ", " + answer.last_name + ", " + role_id + "," + answer.manager_name+");"  
+              //Print Response to terminal table
+              connection.query(query,  (err, res) => {
+                if (err) throw err;
+                console.log("\n*************** LIST EMPLOYEES WITH JOB TITLE*****************\n".green);
+                // runSearch()
+                connection.end();
+              });              
               break;
           } 
-          console.table("\nBuilding output...\n".green);
-          let query = "SELECT first_name 'First Name', last_name 'Last Name' ";
-          query += "FROM employee ";
-          query += "INNER JOIN role ON employee.role_id = role.role_id ";
-          query += "WHERE job_title=" + "'" + answer.dept + "'";
-          console.log("\n***************************[ LIST EMPLOYEES WITH JOB TITLE ".yellow + colors.green(answer.dept) + " ]***************************\n".yellow
-          );          
-          //Print Response to terminal table
-          connection.query(query,  (err, res) => {
-            if (err) throw err;
-            console.table(res);
-            // runSearch()
-            connection.end();
-          });
     })
     })}
   
