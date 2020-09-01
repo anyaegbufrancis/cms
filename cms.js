@@ -27,19 +27,20 @@ connection.connect(function (err) {
 
 //Main Inquirer Entry Point. Breaks prompts into blocks.
 function mainEnteryPoint() {
+  //console.clear()
   inquirer
   //Main Block of Questions
     .prompt([
       {
         name: "data",
         type: "list",
-        message: "What would you like to do?",
+        message: "What would you like to do?".magenta,
         choices: [
-          "View Employees, Roles, Departments or Managers",
-          "Add Employee, Roles, Departments",
-          "Update Employee Details",
-          "Remove Employee, Department or Roles",
-          "EXIT",
+          "VIEW     --  <<Employees, Roles, Departments or Managers>>".yellow,
+          "ADD      --  <<Employee, Roles, Departments>>".yellow,
+          "UPDATE   --  <<Employee Data, Roles or Departments>>".yellow,
+          "REMOVE  --  <<Employee, Roles or Departments>>".yellow,
+          "EXIT     --  <<To Close the APP>>".red,
         ],
       },
       
@@ -49,7 +50,7 @@ function mainEnteryPoint() {
         type: "list",
         message: "What do you like to view?",
         when: (response) =>
-          response.data === "View Employees, Roles, Departments or Managers",
+          response.data === "VIEW     --  <<Employees, Roles, Departments or Managers>>".yellow,
         choices: ["Employee Details", "Roles, Managers or Departments"],
       },
 
@@ -82,9 +83,19 @@ function mainEnteryPoint() {
         type: "list",
         message: "What new entity do you want to add?",
         when: (response) =>
-          response.data === "Add Employee, Roles, Departments",
+          response.data === "ADD      --  <<Employee, Roles, Departments>>".yellow,
         choices: ["Add New Employee", "Add New Role", "Add New Department"],
       },
+       
+       //Update Employee  Questions
+      {
+        name: "data",
+        type: "list",
+        message: "Which Data do you want to Update?",
+        when: (response) => response.data === "UPDATE   --  <<Employee Data, Roles or Departments>>".yellow,
+        choices: ["Update Employee Data", "Update Roles", "Update Department"],
+      },
+      
     ])
     
     //Capture each first level response. Some final level questions passed to function level inquirer
@@ -134,6 +145,21 @@ function mainEnteryPoint() {
 
         case "Add New Department":
           addNewDepartment();
+          break;
+          
+        //*****************************************************************************//
+        
+        //Block Query No 3 (Update Cases Begins) Cases Begins Here
+        case "Update Employee Data":
+          updateEmployeeData();
+          break;
+
+        case "Update Roles":
+          updateRoles();
+          break;
+          
+        case "Update Manager":
+          updateManager();
           break;
       }
     });
@@ -504,6 +530,104 @@ addNewDepartment = () => {
   }
   
   
+  //Add New Department
+updateEmployeeData = () => { 
+                                                      
+  //Call inquirer prompt to receive user parameters
+  inquirer.prompt([
+    {
+      name: "data",
+      type: "list",
+      message: "Which EMPLOYEE Data do you want to Update?",
+     // when: (response) => response.data === "Update Employee Data",
+      choices: ["Employee First Name", "Employee Last Name", "Employee Role", "Employee Manager"],
+    },
+     
+  ]) .then( answer => {
+        //Switch cases for employee add.
+        switch (answer.data) {                                                
+          case   "Employee First Name":
+           let query = "SELECT employee_id, first_name, last_name FROM employee";
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    //Generate an Array of first names and Last Names 
+    employeeNames = [];  
+     for (let i=0; i<res.length; i++){
+       (employeeNames.push(res[i].first_name+ " " +res[i].last_name))
+     }
+     console.log(employeeNames)
+    inquirer.prompt([
+      {
+        name: "name",
+        type: "list",
+        message: "Select Employee you want to update their first name?",
+        //Parses department name array to prompt
+        choices: employeeNames
+      }      
+    ]) .then( answer => {
+          //function to return matching users here
+          console.log(answer.name)
+          let splitWords = (answer.name).split(" ")
+          console.log(splitWords[0])
+          let query = "SELECT employee_id FROM employee WHERE first_name = '" + splitWords[0] +"'";
+              query += "AND last_name = '" + splitWords[1] + "'";       
+          //Print Response to terminal table
+          connection.query(query,  (err, res) => {
+            if (err) throw err;
+            console.log(res);
+          });
+    })
+    })   
+  
+  
+          // case   "Employee Last Name":
+          // case   "Employee Role":
+          // case   "Employee Manager":       
+          // default:
+          
+          //   //Pass department Name value to SQL Query to populate department database      
+          //   //let query = "ALTER TABLE employee MODIFY first_name " +answer.department_id + ", '" + answer.department_name+ "')" 
+                 
+          //   //Throw error or report successful update
+          //   connection.query(query,  (err, res) => {
+          //     if (err) throw err;
+          //     console.log("\n*************** Department Database Successfuly Updated! *****************\n".green);
+          //     // Display 
+          //     allDepartments()
+          //     mainEnteryPoint()
+          //   });  
+          //   break; 
+          }
+  })
+}
+
+
+
+// {
+//   name: "data",
+//   type: "list",
+//   message: "What ROLE Parameter do you want to Update?",
+//   when: (response) => response.data === "Update Roles",
+//   choices: ["Role Name", "Role Salary", "Role Department"],
+// },
+// {
+//   name: "data",
+//   type: "list",
+//   message: "What DEPARTMENT Parameter do you want to Update?",
+//   when: (response) =>
+//     response.data === "Update Department",
+//   choices: ["Department Name", "Department ID"],
+// },
+// {
+//   name: "department_name",
+//   type: "input",
+//   message: "New Department Name: "
+// },  
+// {
+//   name: "department_id",
+//   type: "input",
+//   message: "New Department ID (Identify each Department by ID): "
+// }, 
   
 
 
