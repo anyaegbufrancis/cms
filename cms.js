@@ -395,12 +395,13 @@ department = department.department_name
     
             default:
               console.log(answer);
-              console.log(role_Name)
-              let findRoleID = "USE cms_db ";
-                  findRoleID += "SELECT role_id FROM role WHERE role_name = " + answer.job_title;
+              let role_id;
+              let findRoleID = "SELECT role_id FROM role WHERE job_title = " + "'"+ answer.job_title + "'";
                   connection.query(findRoleID,  (err, res) => {
                     if (err) throw err;
-                    console.log(res)
+                    role_id = res.role_id[0]
+                    consolelog(role_id[0])
+                    return role_id
                   })                    
               let query = "USE cms_db ";
                   query += "INSERT INTO employee (first_name, last_name, role_id, manager_name) ";
