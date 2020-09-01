@@ -146,7 +146,7 @@ function mainEnteryPoint() {
   query += "FROM employee ";
   query += "INNER JOIN role ON employee.role_id=role.role_id ";
   query += "INNER JOIN department ON role.department_id = department.department_id ";
-  console.log("\n*********************************[ UPDATED LIST OF ALL EMPLOYEES DETAILS]********************************\n".yellow
+  console.log("\n*********************************[ UPDATED EMPLOYEES  ]********************************\n".yellow
   );
   
   //Print Response to terminal table
@@ -154,7 +154,7 @@ function mainEnteryPoint() {
     if (err) throw err;
     console.table(res);
     // runSearch()
-    connection.end();
+    mainEnteryPoint()
   });
 }
 
@@ -191,7 +191,7 @@ employeeByDepartment = () => {
             if (err) throw err;
             console.table(res);
             // runSearch()
-            connection.end();
+            mainEnteryPoint()
           });
     })
     })   
@@ -231,7 +231,7 @@ employeeByManager = () => {
             if (err) throw err;
             console.table(res);
             // runSearch()
-            connection.end();
+            mainEnteryPoint()
           });
     })
     })   
@@ -269,7 +269,7 @@ viewJobTitle = () => {
             if (err) throw err;
             console.table(res);
             // runSearch()
-            connection.end();
+            mainEnteryPoint()
           });
     })
     })   
@@ -285,7 +285,7 @@ allRoles = () => {
       console.log("\n***************************[ LIST OF ALL EXISTING ROLES]***************************\n".yellow
       );
       console.table(res)
-      connection.end();
+      mainEnteryPoint();
     })  
   };
 
@@ -301,7 +301,7 @@ allManagers = () => {
       console.log("\n***************************[ LIST OF ALL MANAGERS]***************************\n".yellow
       );
       console.table(res)
-      connection.end();
+      mainEnteryPoint();
     })  
   };
 
@@ -315,7 +315,7 @@ allDepartments = () => {
       console.log("\n***************************[ LIST OF ALL DEPARTMENTS]***************************\n".yellow
       );
       console.table(res)
-      connection.end();
+      mainEnteryPoint();
     })  
   };
 
@@ -410,12 +410,81 @@ department = department.department_name
                 console.log("\n*************** Employee Database Successfuly Updated! *****************\n".green);
                 // Display 
                 employeeView()
+                mainEnteryPoint()
               });   
             })           
               break;
           } 
     })
     })}
+
+//Add New Employee Functions
+addNewRole = () => {  
+  //SQL Query to return job_title, department_name and manager_names.
+  let query = "SELECT department_name "; 
+      query += "FROM role ";
+      query += "INNER JOIN department ON role.department_id = department.department_id ";
+connection.query(query, function (err, res) {
+if (err) throw err;
+//Sort Array to return only values for department_name in Array
+    let  departmentArray = res.map(res => res["department_name"])
+    //Remove duplicate Department Name
+    departmentArray = [...new Set(departmentArray)]
+   // console.log(departmentArray)
+    //Add New Department to the Array
+    departmentArray.push('Add New Department')
+
+    //Call inquirer prompt to receive user parameters
+    inquirer.prompt([
+      {
+        name: "job_title",
+        type: "input",
+        message: "Job Title: "
+      },
+      {
+        name: "salary",
+        type: "input",
+        message: "Salary (Format: 5000): "
+      },
+      {
+        name: "department_name",
+        type: "list",
+        message: "Select Department or Add New Department: ",
+        //Parses Existing Department names array to prompt
+        choices: departmentArray
+      },  
+    ]) .then( answer => {
+          //Switch cases for employee add.
+          switch (answer) {
+            //First case to add new
+            case "Add New Department":
+              addNewDepartments();
+              break;    
+            default:
+            //Query Database for the role ID of the selected Department Name
+              let departmentID = "SELECT department_id FROM department WHERE department_name = " + "'"+ answer.department_name + "'";
+                  connection.query(departmentID,  (err, res) => {
+                    if (err) throw err;
+                    let  role_id = res.map(res => res["department_id"])
+                    
+              //Pass department ID value to next SQL Query to populate role database      
+              let query = "INSERT INTO role (job_title, salary, department_id) ";
+                  query += "VALUES ( '" + answer.job_title + "', '"+ answer.salary + "', '" + department_ID + "');" 
+                   
+              //Throw error or report successful update
+              connection.query(query,  (err, res) => {
+                if (err) throw err;
+                console.log("\n*************** Role Database Successfuly Updated! *****************\n".green);
+                // Display 
+                allDepartments()
+                mainEnteryPoint()
+              });   
+            })           
+              break;
+          } 
+    })
+    })}
+  
   
 
 
