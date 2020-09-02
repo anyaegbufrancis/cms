@@ -72,7 +72,7 @@ function mainEnteryPoint() {
       {
         name: "data",
         type: "list",
-        message: "Please select which data you like to view?",
+        message: "Please select which data you like to VIE?",
         when: (response) => response.data === "Roles, Managers or Departments",
         choices: ["View ALL Roles", "View ALL Departments", "View ALL Managers"],
       },
@@ -81,7 +81,7 @@ function mainEnteryPoint() {
        {
         name: "data",
         type: "list",
-        message: "What new entity do you want to add?",
+        message: "What new entity do you want to ADD?",
         when: (response) =>
           response.data === "ADD      --  <<Employee, Roles, Departments>>".yellow,
         choices: ["Add New Employee", "Add New Role", "Add New Department"],
@@ -91,9 +91,18 @@ function mainEnteryPoint() {
       {
         name: "data",
         type: "list",
-        message: "Which Data do you want to Update?",
+        message: "Which Data do you want to UPDATE?",
         when: (response) => response.data === "UPDATE   --  <<Employee Data, Roles or Departments>>".yellow,
         choices: ["Update Employee Data", "Update Roles", "Update Department"],
+      },
+      
+      //Remove Employee, Role or Department
+      {
+        name: "data",
+        type: "list",
+        message: "Which Data do you want to REMOVE?",
+        when: (response) => response.data === "REMOVE  --  <<Employee, Roles or Departments>>".yellow,
+        choices: ["REMOVE Employee", "REMOVE Role", "REMOVE Department"],
       },
       
     ])
@@ -149,7 +158,7 @@ function mainEnteryPoint() {
           
         //*****************************************************************************//
         
-        //Block Query No 3 (Update Cases Begins) Cases Begins Here
+        //Block Query No 3 (Update Cases Begins)
         case "Update Employee Data":
           updateEmployeeData();
           break;
@@ -160,6 +169,21 @@ function mainEnteryPoint() {
           
           case "Update Department":
           updateDepartment();
+          break;
+          
+        //*****************************************************************************//
+        
+        //Block Query No 4 (REMOVE Cases Begins)
+        case "REMOVE Employee":
+          removeEmployee();
+          break;
+
+        case "REMOVE Role":
+          removeRoles();
+          break;
+          
+          case "REMOVE Department":
+          removeDepartment();
           break;
       }
     });
@@ -314,7 +338,7 @@ allRoles = () => {
 //Function that queries existing Managers and returns a list of all Managers
 allManagers = () => {
   console.log("\nBuilding output...\n".green);
-  let query = "SELECT employee_id, manager_name 'Manager Names(s)' " 
+  let query = "SELECT manager_name " 
       query += "FROM employee ";
       query += "WHERE manager_name != 'None'";
   connection.query(query, function (err, res) {
@@ -322,7 +346,12 @@ allManagers = () => {
     //Use ES6 filter to extract department_name array  
       console.log("\n***************************[ LIST OF ALL MANAGERS]***************************\n".yellow
       );
-      console.table(res)
+      newManagers = [];
+      for (let i=0; i<res.length; i++){
+        newManagers.push(res[i].manager_name)
+      }
+      const filteredManager = [...new Set(newManagers)]
+      console.table(filteredManager)
       mainEnteryPoint();
     })  
   };
