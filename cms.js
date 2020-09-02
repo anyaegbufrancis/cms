@@ -102,7 +102,7 @@ function mainEnteryPoint() {
     .then( answer => {
       switch (answer.data) {
         // Block Query No 1 (Employees, Roles, Managers & Department) Cases Begins
-        //Each Final respons calls relevant function
+        //Each Final response calls relevant function
         case "ALL Employee Details":
           employeeView();
           break;
@@ -158,8 +158,8 @@ function mainEnteryPoint() {
           updateRoles();
           break;
           
-        case "Update Manager":
-          updateManager();
+          case "Update Department":
+          updateDepartment();
           break;
       }
     });
@@ -228,7 +228,6 @@ employeeByManager = () => {
   console.log("\nBuilding output...\n".green);
   //var query = "SELECT manager_name FROM employee" 
   let query = "SELECT manager_name FROM employee ";
-      query += "WHERE manager_name != 'None' AND manager_name != ''";
   connection.query(query, function (err, res) {
     if (err) throw err;
     //Use ES6 filter to extract department_name array
@@ -315,9 +314,9 @@ allRoles = () => {
 //Function that queries existing Managers and returns a list of all Managers
 allManagers = () => {
   console.log("\nBuilding output...\n".green);
-  let query = "SELECT employee_id 'ID', manager_name 'Manager Names(s)' " 
+  let query = "SELECT employee_id, manager_name 'Manager Names(s)' " 
       query += "FROM employee ";
-      query += "WHERE manager_name != 'None' AND manager_name != ''";
+      query += "WHERE manager_name != 'None'";
   connection.query(query, function (err, res) {
     if (err) throw err;
     //Use ES6 filter to extract department_name array  
@@ -347,29 +346,15 @@ allDepartments = () => {
 //Add New Employee Functions
 addNewEmployee = () => {  
   //SQL Query to return job_title, department_name and manager_names.
-  let query = "SELECT job_title, department_name, manager_name "; 
-      query += "FROM employee ";
-      query += "INNER JOIN role ON employee.role_id=role.role_id ";
-      query += "INNER JOIN department ON role.department_id=department.department_id ";
+  let query = "SELECT first_name, last_name FROM employee"; 
 connection.query(query, function (err, res) {
 if (err) throw err;
-//Sort Array to return only values for manager_name in Array
-    let  managerArray = res.map(res => res["manager_name"])
-    //Remove duplicate Manager Name
-    managerArray = [...new Set(managerArray)]
-   // console.log(managerArray)
-    //Add 'None' to the Array
-    managerArray.push('None')
-    
-//Sort Array to return only values for manager_name in Array
-let  jobTitleArray = res.map(res => res["job_title"])
-//Remove duplicate Job Titles
-jobTitleArray = [...new Set(jobTitleArray)]
-//Add 'Add' Option to the Array
-//jobTitleArray.push('Add Job Title')
-//console.log(jobTitleArray)
 
-    //Call inquirer prompt to receive user parameters
+managerNames = [];  
+     for (let i=0; i<res.length; i++){
+       (managerNames.push(res[i].first_name+ " " +res[i].last_name))
+     }
+    //Call inquirer prompt to receive user parameters and select Manager from List of Employees
     inquirer.prompt([
       {
         name: "first_name",
@@ -380,35 +365,49 @@ jobTitleArray = [...new Set(jobTitleArray)]
         name: "last_name",
         type: "input",
         message: "Employee Last Name: "
-      },
-      {
-        name: "job_title",
-        type: "list",
-        message: "Select Employee job title (Please select 'None' Employee without a Manager): ",
-        //Parses Existing Manager names array to prompt
-        choices: jobTitleArray
-      },  
+      },        
       {
         name: "manager_name",
         type: "list",
         message: "Select Manager(Please select 'None' for Employee without a Manager): ",
         //Parses Existing Manager names array to prompt
-        choices: managerArray
-      }             
+        choices: managerNames
+      }        
       
     ]) .then( answer => {
-          //Switch cases for employee add.
+      //save input values as constants in memory
+      const firstName = answer.first_name
+      const lastName = answer.last_name
+      const managerName = answer.manager_name
+      let query = "SELECT job_title FROM role"      
+      const jobTitles = []
+      connection.query(query, (err, res) => {
+        if(err) throw err
+        console.log(res[0].job_title)
+        for (let i=0; i<res.length; i++){
+          (jobTitles.push(res[i].job_title))
+        }
+      inquirer.prompt([
+        {
+          name: "job_title",
+          type: "list",
+          message: "Select Employee job title (Please select 'None' Employee without a Manager): ",
+          //Parses Existing Manager names array to prompt
+          choices: jobTitles
+        }
+      ]).then( answer => {
+          //Switch case employee job title.
           switch (answer) {
             default:
             //Query Database for the role ID of the selected Job Title
-              let findRoleID = "SELECT role_id FROM role WHERE job_title = " + "'"+ answer.job_title + "'";
-                  connection.query(findRoleID,  (err, res) => {
+              let query = "SELECT role_id FROM role WHERE job_title = " + "'"+ answer.job_title + "'";
+                  connection.query(query,  (err, res) => {
                     if (err) throw err;
-                    let  role_id = res.map(res => res["role_id"])
+                    let  role_id = res[0].role_id
                     
               //Pass role ID value to next SQL Query to populate employee database      
-              let query = "INSERT INTO employee (first_name, last_name, role_id, manager_name) ";
-                  query += "VALUES ( '" + answer.first_name + "', '"+ answer.last_name + "', " + role_id + ", '" + answer.manager_name+"');" 
+               let query = "INSERT INTO employee (first_name, last_name, role_id, manager_name) ";
+                  query += "VALUES ( '" + firstName + "', '"+ lastName + "', " + role_id + ", '" + managerName + "');" 
                    
               //Throw error or report successful update
               connection.query(query,  (err, res) => {
@@ -420,8 +419,11 @@ jobTitleArray = [...new Set(jobTitleArray)]
             })           
             break;
           } 
+        })
     })
     })}
+)}
+  
 
 //Add New Employee Functions
 addNewRole = () => {  
@@ -434,8 +436,6 @@ if (err) throw err;
     //Remove duplicate Department Name
     departmentArray = [...new Set(departmentArray)]
    // console.log(departmentArray)
-    //Add New Department to the Array
-    departmentArray.push('Add New Department')
 
     //Call inquirer prompt to receive user parameters
     inquirer.prompt([
@@ -452,17 +452,13 @@ if (err) throw err;
       {
         name: "department_name",
         type: "list",
-        message: "Select Department or Add New Department: ",
+        message: "Select Department: ",
         //Parses Existing Department names array to prompt
         choices: departmentArray
       },  
     ]) .then( answer => {
           //Switch cases for employee add.
-          switch (answer) {
-            //First case to add new
-            case "Add New Department":
-              addNewDepartments();
-              break;    
+          switch (answer) {   
             default:
             //Query Database for the role ID of the selected Department Name
               let query = "SELECT department_id FROM department WHERE department_name = " + "'"+ answer.department_name + "'";
@@ -520,7 +516,8 @@ addNewDepartment = () => {
                 console.log("\n*************** Department Database Successfuly Updated! *****************\n".green);
                 // Display 
                 allDepartments()
-              });   
+              })
+              break;   
             }
     })
   }
@@ -641,26 +638,30 @@ inquirer.prompt([
      });
 })
 })
-  break; 
+break; 
   
   
   //Case to cater for Employee Role update
   case   "Employee Role":
-    let name_query = "SELECT first_name, last_name, job_title FROM employee ";
-        name_query += "INNER JOIN role ON role.role_id = employee.role_id "
-connection.query(name_query, function (err, res) {
+    let em_query = "SELECT first_name, last_name FROM employee ";
+connection.query(em_query, function (err, res) {
 if (err) throw err;
 //Generate an Array of first names and Last Names 
-const employeesList = [];  
+const employeesList = []; 
 for (let i=0; i<res.length; i++){
 (employeesList.push(res[i].first_name + " " + res[i].last_name))
 }
 
-//Generate an Array of Job Titles 
 const jobTitles = [];  
-for (let i=0; i<res.length; i++){
-(jobTitles.push(res[i].job_title))
-}
+let title_query = "SELECT job_title FROM role ";
+connection.query(title_query, (err, res) => {
+  if (err) throw err;
+  //Generate an Array of Job Titles 
+ for (let i=0; i<res.length; i++){
+  (jobTitles.push(res[i].job_title))
+  }
+})
+
 //Call Inquirer to prompt for employee name selection
 inquirer.prompt([
 {
@@ -680,33 +681,116 @@ inquirer.prompt([
 ]) .then( answer => {
    //Receives the answer and split it into first name and last name
    let splitWords = (answer.name).split(" ")
-   console.log(answer.name)
-   //SQL Query that grabs employee ID that matches selected first name and last name
-   let query = "SELECT role_id, employee_id FROM employee WHERE first_name = '" + splitWords[0] +" '";
-       query += " AND last_name = '" + splitWords[1] + " '"; 
-       query += "INNER JOIN role ON employee.employee_id = role.role_id" 
+   
+   //Placeholder for chosen target job title
+   const employeeJobTitle = answer.title
+   
+   //SQL Query that grabs the Job Title of the Selected Employee first name and last name
+   let query = "SELECT employee_id FROM employee ";
+       query += "WHERE first_name = '" + splitWords[0] +"' AND last_name = '" + splitWords[1] + "'";     
    connection.query(query,  (err, res) => {
-     if (err) throw err;    
-       console.log(res)
-    //Use inquirer received input to build a SQL update call
-     let query = "UPDATE employee SET role_id = '" + 'ROLE ID OF SELECTED ROLE' + "' WHERE employee_id = " + res[0].employee_id
+     if (err) throw err;  
+     
+       //Identify this employee ID for use in final role_id        
+  const thisEmployee = res[0].employee_id;
+  
+       //Find the role_id of the selected Employee
+       let query = "SELECT role_id FROM role WHERE job_title = '" + employeeJobTitle + "'" 
      connection.query(query,  (err, res) => {
        if (err) throw err;
-       console.log("\n*************** User First Name Successfuly Updated! *****************\n".green)
-       //employeeView()
-     })
-  
+       
+       //Use the received role_id to update the employee role
+       let query = "UPDATE employee SET role_id = " + res[0].role_id + " WHERE employee_id = " + thisEmployee
+       connection.query(query, (err, res) => {
+         if (err) throw err;
+         console.log("\n*************** " + answer.name + " Role Successfully UPDATED! *****************\n".green)
+       employeeView()         
+       })       
+     })  
    });
 })
 })
-break; 
+break;
 
+//Case to cater for Employee Manager update
+case "Employee Manager":
+let name_query = "SELECT first_name, last_name FROM employee ";
+connection.query(name_query, function (err, res) {
+if (err) throw err;
 
+//Generate an Array of first names and Last Names 
+const employeesList = []; 
+for (let i=0; i<res.length; i++){
+(employeesList.push(res[i].first_name + " " + res[i].last_name))
+};
 
-  
+inquirer.prompt([
+  {
+   name: "name",
+   type: "list",
+   message: "Select EMPLOYEE you want to update their Manager: ",
+   //Parses employee name array to prompt
+   choices: employeesList
   }  
+  ]) .then( answer => {
+    const employeeName = answer.name
+const managerList = employeesList.filter(val => val != answer.name)
+console.log(managerList.push('None'))
+
+//Call Inquirer to prompt for Name Manager's Name
+inquirer.prompt([
+{
+ name: "name",
+ type: "list",
+ message: "Select the name of the NEW MANAGER: ",
+ //Parses employee name array to prompt
+ choices: managerList
+}  
+]) .then( answer => {
+  const managerName = answer.name
+   //Receives the answer and split it into first name and last name of manager & employee
+   let splitWords = (employeeName).split(" ")
+   console.log(splitWords)
+  // let managerSplitWords = (managerName).split(" ")
+  // console.log(splitWords)
+   
+   
+   //SQL Query that grabs the employee ID of the Selected Employee first name and last name
+   let query = "SELECT employee_id FROM employee ";
+       query += "WHERE first_name = '" + splitWords[0] +"' AND last_name = '" + splitWords[1] + "'";     
+   connection.query(query,  (err, res) => {
+     if (err) throw err;  
+     
+       //Identify this employee ID for use in final role_id        
+  const thisEmployeeID = res[0].employee_id;
+  
+       //Find the Manager ID of the selected Manager
+  //     let query = "SELECT employee_id FROM employee WHERE "; 
+  //          query += "WHERE first_name = '" + managerSplitWords[0] +"' AND last_name = '" + managerSplitWords[1] + "'";
+  //   connection.query(query,  (err, res) => {
+  //    if (err) throw err;
+       
+       //Use the received role_id to update the employee role
+       let query = "UPDATE employee SET manager_name = '" + managerName + "' WHERE employee_id = " + thisEmployeeID
+       connection.query(query, (err, res) => {
+         if (err) throw err;
+         console.log("\n*************** " + answer.name + " Role Successfully UPDATED! *****************\n".green)
+       employeeView()         
+       })       
+      
+   });
   })
-}
+  
+  })
+})  
+break;
+        }
+        }
+           )
+  }
+
+ 
+
 
 
 updateRoles = () => {
@@ -722,41 +806,188 @@ for (let i=0; i<res.length; i++){
 //Call Inquirer to prompt for employee name selection
 inquirer.prompt([
 {
- name: "name",
+ name: "title",
  type: "list",
  message: "Select Job Title you want to update: ",
  //Parses employee name array to prompt
  choices: roleNames
-}      
+},    
+{
+  name: "activity",
+  type: "list",
+  message: "Please select which parameter to update: ",
+  //Parses employee name array to prompt
+  choices: ["Role Name", "Role Salary", "Role Department"]
+ }       
 ]) .then( answer => {
   
-   //SQL Query that grabs employee ID that matches selected first name and last name
-   let query = "SELECT role_id FROM role WHERE job_title = '" + answer.name +"'";  
-   connection.query(query,  (err, res) => {
-     if (err) throw err;
-     
-     //Call inquirer to prompt for new user first name that matches query result
+  //SQL Query that grabs employee ID that matches selected first name and last name
+  let query = "SELECT role_id FROM role WHERE job_title = '" + answer.title +"'";
+    connection.query(query, (err, res) => {
+      if (err) throw err;
+      //Keep the role ID in a place holder
+      const selectedRoleID  = res[0].role_id  
+     switch (answer.activity) {
+      case "Role Name":        
+     //Call inquirer to prompt new job title
      inquirer.prompt([
-       {
-         name: "name",
-         type: "input",
-         message: "Please enter the new Job Title Name: ".magenta,
-       }      
-     ]) .then( answer => {
-       
-       //Use inquiere received input to build a SQL update call
-     let query = "UPDATE role SET job_title = '" + answer.name + "' WHERE role_id = " + res[0].role_id
-     connection.query(query,  (err, res) => {
-       if (err) throw err;
-       console.log("\n*************** User First Name Successfuly Updated! *****************\n".green)
-       employeeView()
-     })
-   })
-   });
+      {
+        name: "name",
+        type: "input",
+        message: "Please enter the new JOB TITLE NAME: ".magenta,
+      }      
+    ]) .then( answer => {
+      newRoleName = answer.name
+      //Use inquierer received input to build a SQL update query
+    let query = "UPDATE role SET job_title = '" + newRoleName + "' WHERE role_id = " + selectedRoleID
+    connection.query(query,  (err, res) => {
+      if (err) throw err;
+      console.log("\n*************** Job Title Successfuly Updated! *****************\n".green)
+      employeeView()
+    })
+  })
+        break;
+        case "Role Salary" :        
+          inquirer.prompt([
+            {
+              name: "salary",
+              type: "input",
+              message: "Please enter the new SALARY for the job title: ".magenta,
+            }      
+          ]) .then( answer => {
+            newSalary = answer.salary
+            //Use inquiere received input to build a SQL update call
+          let query = "UPDATE role SET salary = '" + newSalary + "' WHERE role_id = " + selectedRoleID
+          connection.query(query,  (err, res) => {
+            if (err) throw err;
+            console.log("\n*************** Role Salary Successfuly Updated! *****************\n".green)
+            employeeView()
+          })
+        })
+              break;
+              case "Role Department" :    
+              let query = "SELECT department_name FROM department" 
+              
+              //Generate an array of ALL existing departments
+              const departmentArray = []
+              connection.query(query, (err, res) => {
+                if (err) throw err;
+                for (let i=0; i<res.length; i++){
+                  departmentArray.push(res[i].department_name)
+                }             
+               //Call inquirer and pass departmentArray fro selection
+                inquirer.prompt([
+                  {
+                    name: "dept",
+                    type: "list",
+                    message: "Please select the new DEPARTMENT for the job title: ".magenta,
+                    choices: departmentArray
+                  }      
+                ]) .then( answer => {
+                  const department = answer.dept
+                  //Use inquiere received input to build a SQL query to get the department ID 
+                  let query = "SELECT department_id FROM department WHERE department_name = '" + department + "'"
+                  connection.query(query, (err, res) => {
+                    if (err) throw err;
+                    const departmentID = res[0].department_id                  
+                let query = "UPDATE role SET department_id = " + departmentID + " WHERE role_id = " + selectedRoleID
+                connection.query(query,  (err, res) => {
+                  if (err) throw err;
+                  console.log("\n*************** Role Department Successfuly Updated! *****************\n".green)
+                  employeeView()
+                })
+                })
+              })
+            })
+                    break;
+        
+     }
+     
 })
+   });
+
 })
 }
 
+
+//Update Department Function
+updateDepartment = () => {  
+  //SQL Query to department_name .
+  let query = "SELECT department_name FROM department"
+connection.query(query, function (err, res) {
+if (err) throw err;
+//Sort Array to return only values for department_name in Array
+    let  departmentArray = res.map(res => res["department_name"])
+
+    //Call inquirer prompt to receive user parameters
+    inquirer.prompt([    
+      {
+        name: "department_name",
+        type: "list",
+        message: "Select Department to update (ONY NAME CHANGE AVAILABLE): ",
+        //Parses Existing Department names array to prompt
+        choices: departmentArray
+      },  
+    ]) .then( answer => {
+       const  departmentName = answer.department_name
+            //Query Database for the role ID of the selected Department Name
+              let query = "SELECT department_id FROM department WHERE department_name = " + "'"+ departmentName + "'";
+                  connection.query(query,  (err, res) => {
+                    if (err) throw err;
+                    console.log(res)
+                    const departmentID = res[0].department_id
+                    inquirer.prompt([
+                      {
+                      name: "choose",
+                      type: "list",
+                      message: "What DEPARTMENT DATA do you want to Update? :",
+                      choices: ["Department Name", "Department ID"]
+                      },
+                      {
+                        name: "newName",
+                        type: "input",
+                        message: "Please ENTER the new DEPARTMENT NAME :",
+                        when: (answer) => answer.choose === "Department Name"
+                        },
+                        {
+                          name: "newID",
+                          type: "input",
+                          message: "Please ENTER the new DEPARTMENT ID :",
+                          when: (answer) => answer.choose === "Department ID"
+                          }
+                    ]).then( answer => {
+                      console.log(answer)
+                     const  newDepartmentName = answer.newName
+                     const newDepartmentID = answer.newID
+                     //Pass department ID value to next SQL Query to update department database   
+                     switch (answer.choose) {
+                      case "Department Name" :
+                      //update new name function
+                      let query = "UPDATE department SET department_name ='" + newDepartmentName + "' WHERE department_id = " + departmentID;
+                      connection.query(query,  (err, res) => {
+                      if (err) throw err;
+                      console.log("\n*************** Department Name Successfuly Updated! *****************\n".green);
+                      // Display 
+                      allDepartments()
+                    })
+                      break;
+                      case "Department ID" :
+                      //update new ID
+                      let thisQuery = "UPDATE department SET department_id =" + newDepartmentID  + " WHERE department_id = " + departmentID;
+                      connection.query(thisQuery,  (err, res) => {
+                        if (err) throw err;
+                        console.log("\n*************** Department Name Successfuly Updated! *****************\n".green);
+                      // Display 
+                      allDepartments()
+                      })
+                      break;
+                     }  
+                 
+                    })
+            })  
+          }) 
+    })
+}
 
 
 
