@@ -1,11 +1,12 @@
 //Dependencies
-var mysql = require("mysql");
-var inquirer = require("inquirer");
+const mysql = require("mysql");
+const inquirer = require("inquirer");
 const cTable = require("console.table");
 const colors = require("colors");
 
+
 //Set up SQL connection
-var connection = mysql.createConnection({
+const connection = mysql.createConnection({
   host: "127.0.0.1",
 
   // Your port; if not 3306
@@ -187,11 +188,11 @@ function mainEnteryPoint() {
 
         //Exit Case
         case "EXIT     --  <<To Close the APP>>".yellow:
-          console.log("\nCLOSING SESSION...\n".green)
-          connection.end()
-      }
+          console.log("\nCLOSING SESSION...\n".green);
+          connection.end();
+      };
     });
-}
+};
 
 //Function that Queries Employee database
 employeeView = () => {
@@ -215,10 +216,10 @@ employeeView = () => {
     ]).then(answer => {
       if (answer.what === "RETURN") {
         mainEnteryPoint();
-      }
-    })
+      };
+    });
   });
-}
+};
 
 //Function that queries existing Department names, return them to inquirer prompt 
 //and use user's selection to generate employees in that department.
@@ -260,11 +261,11 @@ employeeByDepartment = () => {
         ]).then(answer => {
           if (answer.what === "RETURN") {
             mainEnteryPoint();
-          }
-        })
+          };
+        });
       });
-    })
-  })
+    });
+  });
 };
 
 //Function that queries existing Manager names, return them to inquirer prompt 
@@ -306,11 +307,11 @@ employeeByManager = () => {
         ]).then(answer => {
           if (answer.what === "RETURN") {
             mainEnteryPoint();
-          }
-        })
+          };
+        });
       });
-    })
-  })
+    });
+  });
 };
 
 //Function that queries existing Job Roles, return them to inquirer prompt 
@@ -352,11 +353,11 @@ viewJobTitle = () => {
         ]).then(answer => {
           if (answer.what === "RETURN") {
             mainEnteryPoint();
-          }
-        })
+          };
+        });
       });
-    })
-  })
+    });
+  });
 };
 
 //Function that queries existing Roles, and returns a list of all existing roles
@@ -378,9 +379,9 @@ allRoles = () => {
     ]).then(answer => {
       if (answer.what === "RETURN") {
         mainEnteryPoint();
-      }
-    })
-  })
+      };
+    });
+  });
 };
 
 //Function that queries existing Managers and returns a list of all Managers
@@ -410,9 +411,9 @@ allManagers = () => {
     ]).then(answer => {
       if (answer.what === "RETURN") {
         mainEnteryPoint();
-      }
-    })
-  })
+      };
+    });
+  });
 };
 
 //Function that queries ALL Departments, and returns a list of all existing departments
@@ -434,9 +435,9 @@ allDepartments = () => {
     ]).then(answer => {
       if (answer.what === "RETURN") {
         mainEnteryPoint();
-      }
-    })
-  })
+      };
+    });
+  });
 };
 
 //Add New Employee Functions
@@ -512,15 +513,14 @@ addNewEmployee = () => {
                   // Return to Main Menu 
                   employeeView()
                 });
-              })
-              break;
-          }
-        })
-      })
-    })
-  }
-  )
-}
+              });
+            break;
+          };
+        });
+      });
+    });
+  });
+};
 
 //Add New Employee Functions
 addNewRole = () => {
@@ -576,12 +576,12 @@ addNewRole = () => {
               // Display 
               allRoles()
             });
-          })
-          break;
-      }
-    })
-  })
-}
+          });
+        break;
+      };
+    });
+  });
+};
 
 //Add New Department
 addNewDepartment = () => {
@@ -608,11 +608,11 @@ addNewDepartment = () => {
           console.log("\n*************** Department Database Successfuly Updated! *****************".green);
           // Display 
           allDepartments()
-        })
+        });
       break;
-    }
-  })
-}
+    };
+  });
+};
 
 
 //Add New Department
@@ -673,12 +673,12 @@ updateEmployeeData = () => {
                   if (err) throw err;
                   console.log("\n*************** User First Name Successfuly Updated! *****************".green)
                   employeeView()
-                })
-              })
+                });
+              });
             });
-          })
-        })
-        break;
+          });
+        });
+      break;
 
       //Case to cater for Last Name update
       case "Employee Last Name":
@@ -724,11 +724,11 @@ updateEmployeeData = () => {
                   if (err) throw err;
                   console.log("\n*************** User First Name Successfuly Updated! *****************".green)
                   employeeView()
-                })
-              })
+                });
+              });
             });
-          })
-        })
+          });
+        });
       break;
 
       //Case to cater for Employee Role update
@@ -795,11 +795,11 @@ updateEmployeeData = () => {
                   if (err) throw err;
                   console.log("\n*************** " + answer.name + " Role Successfully UPDATED! *****************".green)
                   employeeView()
-                })
-              })
+                });
+              });
             });
-          })
-        })
+          });
+        });
       break;
 
       //Case to cater for Employee Manager update
@@ -857,16 +857,15 @@ updateEmployeeData = () => {
                   if (err) throw err;
                   console.log("\n*************** " + answer.name + " Role Successfully UPDATED! *****************".green)
                   employeeView()
-                })
+                });
               });
-            })
-          })
-        })
+            });
+          });
+        });
       break;
-    }
-  }
-  )
-}
+    };
+  });
+};
 
 updateRoles = () => {
   //For Employee Role update
@@ -919,8 +918,8 @@ updateRoles = () => {
                 if (err) throw err;
                 console.log("\n*************** Job Title Successfuly Updated! *****************".green)
                 allRoles()
-              })
-            })
+              });
+            });
             break;
           case "Role Salary":
             inquirer.prompt([
@@ -937,20 +936,20 @@ updateRoles = () => {
                 if (err) throw err;
                 console.log("\n*************** Role Salary Successfuly Updated! *****************".green)
                 allRoles()
-              })
-            })
+              });
+            });
             break;
             
           case "Role Department":
             let query = "SELECT department_name FROM department"
 
             //Generate an array of ALL existing departments
-            const departmentArray = []
+            const departmentArray = [];
             connection.query(query, (err, res) => {
               if (err) throw err;
               for (let i = 0; i < res.length; i++) {
-                departmentArray.push(res[i].department_name)
-              }
+                departmentArray.push(res[i].department_name);
+              };
               //Call inquirer and pass departmentArray fro selection
               inquirer.prompt([
                 {
@@ -965,31 +964,31 @@ updateRoles = () => {
                 let query = "SELECT department_id FROM department WHERE department_name = '" + department + "'"
                 connection.query(query, (err, res) => {
                   if (err) throw err;
-                  const departmentID = res[0].department_id
+                  const departmentID = res[0].department_id;
                   let query = "UPDATE role SET department_id = " + departmentID + " WHERE role_id = " + selectedRoleID
                   connection.query(query, (err, res) => {
                     if (err) throw err;
                     console.log("\n*************** Role Department Successfuly Updated! *****************".green)
                     allRoles()
-                  })
-                })
-              })
-            })
+                  });
+                });
+              });
+            });
           break;
-        }
-      })
+        };
+      });
     });
-  })
-}
+  });
+};
 
 //Update Department Function
 updateDepartment = () => {
   //SQL Query to department_name .
-  let query = "SELECT department_name FROM department"
+  let query = "SELECT department_name FROM department";
   connection.query(query, function (err, res) {
     if (err) throw err;
     //Sort Array to return only values for department_name in Array
-    let departmentArray = res.map(res => res["department_name"])
+    let departmentArray = res.map(res => res["department_name"]);
 
     //Call inquirer prompt to receive user parameters
     inquirer.prompt([
@@ -1006,8 +1005,7 @@ updateDepartment = () => {
       let query = "SELECT department_id FROM department WHERE department_name = " + "'" + departmentName + "'";
       connection.query(query, (err, res) => {
         if (err) throw err;
-        console.log(res)
-        const departmentID = res[0].department_id
+        const departmentID = res[0].department_id;
         inquirer.prompt([
           {
             name: "choose",
@@ -1028,9 +1026,8 @@ updateDepartment = () => {
             when: (answer) => answer.choose === "Department ID"
           }
         ]).then(answer => {
-          console.log(answer)
-          const newDepartmentName = answer.newName
-          const newDepartmentID = answer.newID
+          const newDepartmentName = answer.newName;
+          const newDepartmentID = answer.newID;
           //Pass department ID value to next SQL Query to update department database   
           switch (answer.choose) {
             case "Department Name":
@@ -1041,7 +1038,7 @@ updateDepartment = () => {
                 console.log("\n*************** Department Name Successfuly Updated! *****************".green);
                 // Display 
                 allDepartments()
-              })
+              });
               break;
             case "Department ID":
               //update new ID
@@ -1050,15 +1047,15 @@ updateDepartment = () => {
                 if (err) throw err;
                 console.log("\n*************** Department Name Successfuly Updated! *****************".green);
                 // Display 
-                allDepartments()
-              })
+                allDepartments();
+              });
             break;
-          }
-        })
-      })
-    })
-  })
-}
+          };
+        });
+      });
+    });
+  });
+};
 
 //Remove Employee from DB
 removeEmployee = () => {
@@ -1088,20 +1085,19 @@ removeEmployee = () => {
       query += "AND last_name = '" + splitWords[1] + "'";
       connection.query(query, (err, res) => {
         if (err) throw err;
-        console.log(res)
-        const employeeID = res[0].employee_id
+        const employeeID = res[0].employee_id;
 
         //Use inquierer received input to build a SQL update call
         let query = "DELETE FROM employee WHERE employee_id = " + employeeID
         connection.query(query, (err, res) => {
           if (err) throw err;
-          console.log("\n*************** EMPLOYEE " + answer.name + " Successfuly Updated! *****************".green)
-          employeeView()
-        })
-      })
+          console.log("\n*************** EMPLOYEE ".green + answer.name + " Successfuly Removed! *****************".green)
+          employeeView();
+        });
+      });
     });
-  })
-}
+  });
+};
 
 //Remove Role from DB
 removeRoles = () => {
@@ -1112,7 +1108,7 @@ removeRoles = () => {
     let roleNames = [];
     for (let i = 0; i < res.length; i++) {
       (roleNames.push(res[i].job_title))
-    }
+    };
     //Call Inquirer to prompt for employee name selection
     inquirer.prompt([
       {
@@ -1130,7 +1126,7 @@ removeRoles = () => {
       let query = "SELECT role_id FROM role WHERE job_title = '" + roleName + "'";
       connection.query(query, (err, res) => {
         if (err) throw err;
-        const roleID = res[0].role_id
+        const roleID = res[0].role_id;
 
         //Use inquierer received input to build a SQL update call
         let query = "DELETE FROM role WHERE role_id = " + roleID
@@ -1138,11 +1134,11 @@ removeRoles = () => {
           if (err) throw err;
           console.log("\n*************** ROLE" + roleName + " Successfuly Updated! *****************".green)
           allRoles()
-        })
-      })
-    })
-  })
-}
+        });
+      });
+    });
+  });
+};
 
 //Remove Role from DB
 removeDepartment = () => {
@@ -1165,25 +1161,25 @@ removeDepartment = () => {
       }
     ]).then(answer => {
       //Receives the answer and split it into first name and last name
-      let departmentName = answer.name
+      let departmentName = answer.name;
 
       //SQL Query that grabs role ID that matches selected ROLE NAME
       let query = "SELECT department_id FROM department WHERE department_name = '" + departmentName + "'";
       connection.query(query, (err, res) => {
         if (err) throw err;
-        const departmentID = res[0].department_id
+        const departmentID = res[0].department_id;
 
         //Use inquierer received input to build a SQL update call
-        let query = "DELETE FROM department WHERE department_id = " + departmentID
+        let query = "DELETE FROM department WHERE department_id = " + departmentID;
         connection.query(query, (err, res) => {
           if (err) throw err;
           console.log("\n*************** DEPARTMENT" + departmentName + " Successfuly Updated! *****************".green)
           allDepartments()
-        })
-      })
+        });
+      });
     });
-  })
-}
+  });
+};
 
 
 
