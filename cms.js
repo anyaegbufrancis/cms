@@ -1022,3 +1022,88 @@ if (err) throw err;
 
 
 
+
+
+//Update Department Function
+updateDepartment = () => {  
+  //SQL Query to department_name .
+  let query = "SELECT department_name FROM department"
+connection.query(query, function (err, res) {
+if (err) throw err;
+//Sort Array to return only values for department_name in Array
+    let  departmentArray = res.map(res => res["department_name"])
+
+    //Call inquirer prompt to receive user parameters
+    inquirer.prompt([    
+      {
+        name: "department_name",
+        type: "list",
+        message: "Select Department to update (ONY NAME CHANGE AVAILABLE): ",
+        //Parses Existing Department names array to prompt
+        choices: departmentArray
+      },  
+    ]) .then( answer => {
+       const  departmentName = answer.department_name
+            //Query Database for the role ID of the selected Department Name
+              let query = "SELECT department_id FROM department WHERE department_name = " + "'"+ departmentName + "'";
+                  connection.query(query,  (err, res) => {
+                    if (err) throw err;
+                    console.log(res)
+                    const departmentID = res[0].department_id
+                    inquirer.prompt([
+                      {
+                      name: "choose",
+                      type: "list",
+                      message: "What DEPARTMENT DATA do you want to Update? :",
+                      choices: ["Department Name", "Department ID"]
+                      },
+                      {
+                        name: "newName",
+                        type: "input",
+                        message: "Please ENTER the new DEPARTMENT NAME :",
+                        when: (answer) => answer.choose === "Department Name"
+                        },
+                        {
+                          name: "newID",
+                          type: "input",
+                          message: "Please ENTER the new DEPARTMENT ID :",
+                          when: (answer) => answer.choose === "Department ID"
+                          }
+                    ]).then( answer => {
+                      console.log(answer)
+                     const  newDepartmentName = answer.newName
+                     const newDepartmentID = answer.newID
+                     //Pass department ID value to next SQL Query to update department database   
+                     switch (answer.choose) {
+                      case "Department Name" :
+                      //update new name function
+                      let query = "UPDATE department SET department_name ='" + newDepartmentName + "' WHERE department_id = " + departmentID;
+                      connection.query(query,  (err, res) => {
+                      if (err) throw err;
+                      console.log("\n*************** Department Name Successfuly Updated! *****************\n".green);
+                      // Display 
+                      allDepartments()
+                    })
+                      break;
+                      case "Department ID" :
+                      //update new ID
+                      let thisQuery = "UPDATE department SET department_id =" + newDepartmentID  + " WHERE department_id = " + departmentID;
+                      connection.query(thisQuery,  (err, res) => {
+                        if (err) throw err;
+                        console.log("\n*************** Department Name Successfuly Updated! *****************\n".green);
+                      // Display 
+                      allDepartments()
+                      })
+                      break;
+                     }  
+                 
+                    })
+            })  
+          }) 
+    })
+}
+
+
+
+
+
