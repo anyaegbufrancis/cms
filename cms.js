@@ -773,10 +773,7 @@ inquirer.prompt([
   const managerName = answer.name
    //Receives the answer and split it into first name and last name of manager & employee
    let splitWords = (employeeName).split(" ")
-   console.log(splitWords)
-  // let managerSplitWords = (managerName).split(" ")
-  // console.log(splitWords)
-   
+   console.log(splitWords);
    
    //SQL Query that grabs the employee ID of the Selected Employee first name and last name
    let query = "SELECT employee_id FROM employee ";
@@ -786,18 +783,12 @@ inquirer.prompt([
      
        //Identify this employee ID for use in final role_id        
   const thisEmployeeID = res[0].employee_id;
-  
-       //Find the Manager ID of the selected Manager
-  //     let query = "SELECT employee_id FROM employee WHERE "; 
-  //          query += "WHERE first_name = '" + managerSplitWords[0] +"' AND last_name = '" + managerSplitWords[1] + "'";
-  //   connection.query(query,  (err, res) => {
-  //    if (err) throw err;
        
        //Use the received role_id to update the employee role
        let query = "UPDATE employee SET manager_name = '" + managerName + "' WHERE employee_id = " + thisEmployeeID
        connection.query(query, (err, res) => {
          if (err) throw err;
-         console.log("\n*************** " + answer.name + " Role Successfully UPDATED! *****************\n".green)
+         console.log("\n*************** " + answer.name + " Role Successfully UPDATED! *****************".green)
        employeeView()         
        })       
       
@@ -865,8 +856,8 @@ inquirer.prompt([
     let query = "UPDATE role SET job_title = '" + newRoleName + "' WHERE role_id = " + selectedRoleID
     connection.query(query,  (err, res) => {
       if (err) throw err;
-      console.log("\n*************** Job Title Successfuly Updated! *****************\n".green)
-      employeeView()
+      console.log("\n*************** Job Title Successfuly Updated! *****************".green)
+      allRoles()
     })
   })
         break;
@@ -883,8 +874,8 @@ inquirer.prompt([
           let query = "UPDATE role SET salary = '" + newSalary + "' WHERE role_id = " + selectedRoleID
           connection.query(query,  (err, res) => {
             if (err) throw err;
-            console.log("\n*************** Role Salary Successfuly Updated! *****************\n".green)
-            employeeView()
+            console.log("\n*************** Role Salary Successfuly Updated! *****************".green)
+            allRoles()
           })
         })
               break;
@@ -916,8 +907,8 @@ inquirer.prompt([
                 let query = "UPDATE role SET department_id = " + departmentID + " WHERE role_id = " + selectedRoleID
                 connection.query(query,  (err, res) => {
                   if (err) throw err;
-                  console.log("\n*************** Role Department Successfuly Updated! *****************\n".green)
-                  employeeView()
+                  console.log("\n*************** Role Department Successfuly Updated! *****************".green)
+                  allRoles()
                 })
                 })
               })
