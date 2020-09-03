@@ -282,7 +282,8 @@ employeeByManager = () => {
   connection.query(query, function (err, res) {
     if (err) throw err;
     //Use ES6 filter to extract department_name array
-    let managerArray = res.map(res => res["manager_name"]);
+    let initialManagerArray = res.map(res => res["manager_name"]);
+    const managerArray = [...new Set(initialManagerArray)]
     //console.log(managerArrayArray) 
     inquirer.prompt([
       {
@@ -1215,13 +1216,12 @@ departmentBudget = () => {
       
       connection.query(query, (err, res) => {
         if (err) throw err;
-        console.log(res)
         console.table(res);
         let salarySum = 0
         for (let i=0; i<res.length; i++){
          salarySum += res[i].Salary
         }        
-        console.log("Total Salary for Team in " + colors.magenta(answer.dept) + " : " + colors.green.underline(salarySum) + "\n")
+        console.table("Total Salary for Team in " + colors.magenta(answer.dept) + " : " + colors.green.underline(salarySum) + "\n");
         inquirer.prompt([
           {
             name: "what",
