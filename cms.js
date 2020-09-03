@@ -34,13 +34,13 @@ function mainEnteryPoint() {
       {
         name: "data",
         type: "list",
-        message: "What would you like to do?".magenta,
+        message: "What would you like to do?\n".magenta,
         choices: [
-          "VIEW     --  <<Employees, Roles, Departments or Managers>>".yellow,
-          "ADD      --  <<Employee, Roles, Departments>>".yellow,
-          "UPDATE   --  <<Employee Data, Roles or Departments>>".yellow,
-          "REMOVE  --  <<Employee, Roles or Departments>>".yellow,
-          "EXIT     --  <<To Close the APP>>".red,
+          "VIEW     --  <<Employees, Roles, Departments or Managers>>".green,
+          "ADD      --  <<Employee, Roles, Departments>>".green,
+          "UPDATE   --  <<Employee Data, Roles or Departments>>".green,
+          "REMOVE   --  <<Employee, Roles or Departments>>".green,
+          "EXIT     --  <<To Close the APP>>".yellow,
         ],
       },
       
@@ -50,7 +50,7 @@ function mainEnteryPoint() {
         type: "list",
         message: "What do you like to view?",
         when: (response) =>
-          response.data === "VIEW     --  <<Employees, Roles, Departments or Managers>>".yellow,
+          response.data === "VIEW     --  <<Employees, Roles, Departments or Managers>>".green,
         choices: ["Employee Details", "Roles, Managers or Departments"],
       },
 
@@ -83,7 +83,7 @@ function mainEnteryPoint() {
         type: "list",
         message: "What new entity do you want to ADD?",
         when: (response) =>
-          response.data === "ADD      --  <<Employee, Roles, Departments>>".yellow,
+          response.data === "ADD      --  <<Employee, Roles, Departments>>".green,
         choices: ["Add New Employee", "Add New Role", "Add New Department"],
       },
        
@@ -92,7 +92,7 @@ function mainEnteryPoint() {
         name: "data",
         type: "list",
         message: "Which Data do you want to UPDATE?",
-        when: (response) => response.data === "UPDATE   --  <<Employee Data, Roles or Departments>>".yellow,
+        when: (response) => response.data === "UPDATE   --  <<Employee Data, Roles or Departments>>".green,
         choices: ["Update Employee Data", "Update Roles", "Update Department"],
       },
       
@@ -101,7 +101,7 @@ function mainEnteryPoint() {
         name: "data",
         type: "list",
         message: "Which Data do you want to REMOVE?",
-        when: (response) => response.data === "REMOVE  --  <<Employee, Roles or Departments>>".yellow,
+        when: (response) => response.data === "REMOVE   --  <<Employee, Roles or Departments>>".green,
         choices: ["REMOVE Employee", "REMOVE Role", "REMOVE Department"],
       },
       
