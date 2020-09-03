@@ -48,7 +48,7 @@ function mainEnteryPoint() {
       {
         name: "data",
         type: "list",
-        message: "What do you like to view?",
+        message: "What do you like to view?\n".magenta,
         when: (response) =>
           response.data === "VIEW     --  <<Employees, Roles, Departments or Managers>>".green,
         choices: ["Employee Details", "Roles, Managers or Departments"],
@@ -58,7 +58,7 @@ function mainEnteryPoint() {
       {
         name: "data",
         type: "list",
-        message: "What Employee data do you want to view?",
+        message: "What Employee data do you want to view?\n".magenta,
         when: (response) => response.data === "Employee Details",
         choices: [
           "ALL Employee Details",
@@ -72,7 +72,7 @@ function mainEnteryPoint() {
       {
         name: "data",
         type: "list",
-        message: "Please select which data you like to VIE?",
+        message: "Please select which data you like to VIEW?\n".magenta,
         when: (response) => response.data === "Roles, Managers or Departments",
         choices: ["View ALL Roles", "View ALL Departments", "View ALL Managers"],
       },
@@ -81,7 +81,7 @@ function mainEnteryPoint() {
        {
         name: "data",
         type: "list",
-        message: "What new entity do you want to ADD?",
+        message: "What new entity do you want to ADD?\n".magenta,
         when: (response) =>
           response.data === "ADD      --  <<Employee, Roles, Departments>>".green,
         choices: ["Add New Employee", "Add New Role", "Add New Department"],
@@ -91,7 +91,7 @@ function mainEnteryPoint() {
       {
         name: "data",
         type: "list",
-        message: "Which Data do you want to UPDATE?",
+        message: "Which Data do you want to UPDATE?\n".magenta,
         when: (response) => response.data === "UPDATE   --  <<Employee Data, Roles or Departments>>".green,
         choices: ["Update Employee Data", "Update Roles", "Update Department"],
       },
@@ -100,7 +100,7 @@ function mainEnteryPoint() {
       {
         name: "data",
         type: "list",
-        message: "Which Data do you want to REMOVE?",
+        message: "Which Data do you want to REMOVE?".magenta,
         when: (response) => response.data === "REMOVE   --  <<Employee, Roles or Departments>>".green,
         choices: ["REMOVE Employee", "REMOVE Role", "REMOVE Department"],
       },
@@ -225,13 +225,12 @@ employeeByDepartment = () => {
       {
         name: "dept",
         type: "list",
-        message: "What Department Employees do you want to view?",
+        message: "What Department Employees do you want to view?\n".magenta,
         //Parses department name array to prompt
         choices: departmentArray
       }      
     ]) .then( answer => {
           //function to return matching users here
-          console.table("\nBuilding output...\n".green);
           let query = "SELECT first_name 'First Name', last_name 'Last Name' ";
           query += "FROM employee ";
           query += "INNER JOIN role ON employee.role_id=role.role_id ";
@@ -253,7 +252,6 @@ employeeByDepartment = () => {
 //Function that queries existing Manager names, return them to inquirer prompt 
 //and use user's selection to generate employees under the Manager's Leadership.
 employeeByManager = () => {
-  console.log("\nBuilding output...\n".green);
   //var query = "SELECT manager_name FROM employee" 
   let query = "SELECT manager_name FROM employee ";
   connection.query(query, function (err, res) {
@@ -265,7 +263,7 @@ employeeByManager = () => {
       {
         name: "dept",
         type: "list",
-        message: "Which Manager do you want to see their team members",
+        message: "Which Manager do you want to see their team members?\n".magenta,
         //Parses department name array to prompt
         choices: managerArray
       }      
@@ -290,7 +288,6 @@ employeeByManager = () => {
 //Function that queries existing Job Roles, return them to inquirer prompt 
 //and use user's selection to generate Employees Under the selected job title.
 viewJobTitle = () => {
-  console.log("\nBuilding output...\n".green);
   let query = "SELECT job_title FROM role" 
   connection.query(query, function (err, res) {
     if (err) throw err;
@@ -301,7 +298,7 @@ viewJobTitle = () => {
       {
         name: "dept",
         type: "list",
-        message: "Which Job Title do you want present Employees",
+        message: "Which Job Title do you want present Employees?\n".magenta,
         //Parses department name array to prompt
         choices: jobTitleArray
       }      
@@ -327,7 +324,6 @@ viewJobTitle = () => {
 
 //Function that queries existing Roles, and returns a list of all existing roles
 allRoles = () => {
-  console.log("\nBuilding output...\n".green);
   let query = "SELECT role_id 'ID', job_title 'Job Title'  FROM role" 
   connection.query(query, function (err, res) {
     if (err) throw err;
@@ -341,7 +337,6 @@ allRoles = () => {
 
 //Function that queries existing Managers and returns a list of all Managers
 allManagers = () => {
-  console.log("\nBuilding output...\n".green);
   let query = "SELECT manager_name " 
       query += "FROM employee ";
       query += "WHERE manager_name != 'None'";
@@ -355,9 +350,7 @@ allManagers = () => {
         newManagers.push(res[i].manager_name)
       };  
       const filteredManager = [...new Set(newManagers)]
-            
       let placeHolder = filteredManager.filter((item) => item!== 'None ')
-      console.log(placeHolder)
       console.table(placeHolder)
       mainEnteryPoint();
     })  
@@ -365,7 +358,6 @@ allManagers = () => {
 
 //Function that queries ALL Departments, and returns a list of all existing departments
 allDepartments = () => {
-  console.log("\nBuilding output...\n".green);
   let query = "SELECT department_id 'ID', department_name 'Department Name(s)' " 
       query += "FROM department ";
   connection.query(query, function (err, res) {
@@ -395,12 +387,12 @@ managerNames = [];
       {
         name: "first_name",
         type: "input",
-        message: "Employee First Name (ONE WORD): "
+        message: "Employee First Name (ONE WORD): \n".green
       },
       {
         name: "last_name",
         type: "input",
-        message: "Employee Last Name (ONE WORD): "
+        message: "Employee Last Name (ONE WORD): \n".green
       },        
       {
         name: "manager_name",
@@ -427,7 +419,7 @@ managerNames = [];
         {
           name: "job_title",
           type: "list",
-          message: "Select Employee job title (Please select 'None' Employee without a Manager): ",
+          message: "Select Employee job title (Please select 'None' Employee without a Manager): \n".green,
           //Parses Existing Manager names array to prompt
           choices: jobTitles
         }
@@ -478,17 +470,17 @@ if (err) throw err;
       {
         name: "job_title",
         type: "input",
-        message: "Job Title: "
+        message: "Job Title: \n".green
       },
       {
         name: "salary",
         type: "input",
-        message: "Salary (Format: 5000): "
+        message: "Salary (Format: 5000): \n".green
       },
       {
         name: "department_name",
         type: "list",
-        message: "Select Department: ",
+        message: "Select Department: \n".green,
         //Parses Existing Department names array to prompt
         choices: departmentArray
       },  
@@ -529,7 +521,7 @@ addNewDepartment = () => {
       {
         name: "department_name",
         type: "input",
-        message: "New Department Name: "
+        message: "New Department Name: \n".green
       }   
     ]) .then( answer => {
       
@@ -562,7 +554,7 @@ updateEmployeeData = () => {
     {
       name: "data",
       type: "list",
-      message: "Which EMPLOYEE Data do you want to Update?",
+      message: "Which EMPLOYEE Data do you want to Update?\n".green,
      // when: (response) => response.data === "Update Employee Data",
       choices: ["Employee First Name", "Employee Last Name", "Employee Role", "Employee Manager"],
     },
@@ -584,7 +576,7 @@ updateEmployeeData = () => {
       {
         name: "name",
         type: "list",
-        message: "Select Employee you want to update their first name?",
+        message: "Select Employee you want to update their first name?\n".green,
         //Parses employee name array to prompt
         choices: employeeNames
       }      
@@ -603,7 +595,7 @@ updateEmployeeData = () => {
               {
                 name: "name",
                 type: "input",
-                message: "Please enter the new First Name: ".magenta,
+                message: "Please enter the new First Name: \n".green,
               }      
             ]) .then( answer => {
               
@@ -635,7 +627,7 @@ inquirer.prompt([
  {
    name: "name",
    type: "list",
-   message: "Select Employee you want to update their first name?",
+   message: "Select Employee you want to update their first name?\n".green,
    //Parses employee name array to prompt
    choices: employeeNames
  }      
@@ -654,7 +646,7 @@ inquirer.prompt([
          {
            name: "name",
            type: "input",
-           message: "Please enter the new Last Name: ".magenta,
+           message: "Please enter the new Last Name: \n".green,
          }      
        ]) .then( answer => {
          
@@ -698,14 +690,14 @@ inquirer.prompt([
 {
  name: "name",
  type: "list",
- message: "Select EMPLOYEE you want to update their job title: ",
+ message: "Select EMPLOYEE you want to update their job title: \n".green,
  //Parses employee name array to prompt
  choices: employeesList
 },   
 {
   name: "title",
   type: "list",
-  message: "Select NEW JOB TITLE of the employee: ",
+  message: "Select NEW JOB TITLE of the employee: \n".green,
   //Parses employee name array to prompt
   choices: jobTitles
  }   
@@ -759,7 +751,7 @@ inquirer.prompt([
   {
    name: "name",
    type: "list",
-   message: "Select EMPLOYEE you want to update their Manager: ",
+   message: "Select EMPLOYEE you want to update their Manager: \n".green,
    //Parses employee name array to prompt
    choices: employeesList
   }  
@@ -773,7 +765,7 @@ inquirer.prompt([
 {
  name: "name",
  type: "list",
- message: "Select the name of the NEW MANAGER: ",
+ message: "Select the name of the NEW MANAGER: \n".green,
  //Parses employee name array to prompt
  choices: managerList
 }  
@@ -839,14 +831,14 @@ inquirer.prompt([
 {
  name: "title",
  type: "list",
- message: "Select Job Title you want to update: ",
+ message: "Select Job Title you want to update: \n".green,
  //Parses employee name array to prompt
  choices: roleNames
 },    
 {
   name: "activity",
   type: "list",
-  message: "Please select which parameter to update: ",
+  message: "Please select which parameter to update: \n".green,
   //Parses employee name array to prompt
   choices: ["Role Name", "Role Salary", "Role Department"]
  }       
@@ -865,7 +857,7 @@ inquirer.prompt([
       {
         name: "name",
         type: "input",
-        message: "Please enter the new JOB TITLE NAME: ".magenta,
+        message: "Please enter the new JOB TITLE NAME: \n".green,
       }      
     ]) .then( answer => {
       newRoleName = answer.name
@@ -883,7 +875,7 @@ inquirer.prompt([
             {
               name: "salary",
               type: "input",
-              message: "Please enter the new SALARY for the job title: ".magenta,
+              message: "Please enter the new SALARY for the job title: \n".green,
             }      
           ]) .then( answer => {
             newSalary = answer.salary
@@ -911,7 +903,7 @@ inquirer.prompt([
                   {
                     name: "dept",
                     type: "list",
-                    message: "Please select the new DEPARTMENT for the job title: ".magenta,
+                    message: "Please select the new DEPARTMENT for the job title: \n".green,
                     choices: departmentArray
                   }      
                 ]) .then( answer => {
@@ -955,7 +947,7 @@ if (err) throw err;
       {
         name: "department_name",
         type: "list",
-        message: "Select Department to update (ONY NAME CHANGE AVAILABLE): ",
+        message: "Select Department to update (ONY NAME CHANGE AVAILABLE): \n".green,
         //Parses Existing Department names array to prompt
         choices: departmentArray
       },  
@@ -971,19 +963,19 @@ if (err) throw err;
                       {
                       name: "choose",
                       type: "list",
-                      message: "What DEPARTMENT DATA do you want to Update? :",
+                      message: "What DEPARTMENT DATA do you want to Update? :\n".green,
                       choices: ["Department Name", "Department ID"]
                       },
                       {
                         name: "newName",
                         type: "input",
-                        message: "Please ENTER the new DEPARTMENT NAME :",
+                        message: "Please ENTER the new DEPARTMENT NAME :\n".green,
                         when: (answer) => answer.choose === "Department Name"
                         },
                         {
                           name: "newID",
                           type: "input",
-                          message: "Please ENTER the new DEPARTMENT ID :",
+                          message: "Please ENTER the new DEPARTMENT ID :\n".green,
                           when: (answer) => answer.choose === "Department ID"
                           }
                     ]).then( answer => {
@@ -997,7 +989,7 @@ if (err) throw err;
                       let query = "UPDATE department SET department_name ='" + newDepartmentName + "' WHERE department_id = " + departmentID;
                       connection.query(query,  (err, res) => {
                       if (err) throw err;
-                      console.log("\n*************** Department Name Successfuly Updated! *****************\n".green);
+                      console.log("\n*************** Department Name Successfuly Updated! *****************".green);
                       // Display 
                       allDepartments()
                     })
@@ -1007,13 +999,12 @@ if (err) throw err;
                       let thisQuery = "UPDATE department SET department_id =" + newDepartmentID  + " WHERE department_id = " + departmentID;
                       connection.query(thisQuery,  (err, res) => {
                         if (err) throw err;
-                        console.log("\n*************** Department Name Successfuly Updated! *****************\n".green);
+                        console.log("\n*************** Department Name Successfuly Updated! *****************".green);
                       // Display 
                       allDepartments()
                       })
                       break;
                      }  
-                 
                     })
             })  
           }) 
@@ -1021,8 +1012,7 @@ if (err) throw err;
 }
 
   //Remove Employee from DB
-  removeEmployee = () => { 
-                                                      
+  removeEmployee = () => {                     
     let query = "SELECT first_name, last_name FROM employee";
     connection.query(query, function (err, res) {
       if (err) throw err;
@@ -1036,7 +1026,7 @@ if (err) throw err;
         {
           name: "name",
           type: "list",
-          message: "Select the EMPLOYEE you want to REMOVE :",
+          message: "Select the EMPLOYEE you want to REMOVE :\n".green,
           //Parses employee name array to prompt
           choices: employeeNames
         }      
@@ -1056,7 +1046,7 @@ if (err) throw err;
               let query = "DELETE FROM employee WHERE employee_id = " + employeeID
               connection.query(query,  (err, res) => {
                 if (err) throw err;
-                console.log("\n*************** EMPLOYEE " + answer.name + " Successfuly Updated! *****************\n".green)
+                console.log("\n*************** EMPLOYEE " + answer.name + " Successfuly Updated! *****************".green)
                 employeeView()
               })
             })
@@ -1066,8 +1056,7 @@ if (err) throw err;
   
   
   //Remove Role from DB
-  removeRoles = () => { 
-                                                      
+  removeRoles = () => {                         
     let query = "SELECT job_title FROM role";
     connection.query(query, function (err, res) {
       if (err) throw err;
@@ -1081,7 +1070,7 @@ if (err) throw err;
         {
           name: "name",
           type: "list",
-          message: "Select the ROLE you want to REMOVE :",
+          message: "Select the ROLE you want to REMOVE :\n".green,
           //Parses employee name array to prompt
           choices: roleNames
         }      
@@ -1099,8 +1088,8 @@ if (err) throw err;
               let query = "DELETE FROM role WHERE role_id = " + roleID
               connection.query(query,  (err, res) => {
                 if (err) throw err;
-                console.log("\n*************** ROLE" + roleName + " Successfuly Updated! *****************\n".green)
-                employeeView()
+                console.log("\n*************** ROLE" + roleName + " Successfuly Updated! *****************".green)
+                allRoles()
               })
             })
             });
@@ -1110,8 +1099,7 @@ if (err) throw err;
 
 
   //Remove Role from DB
-  removeDepartment = () => { 
-                                                      
+  removeDepartment = () => {                                                       
     let query = "SELECT department_name FROM department";
     connection.query(query, function (err, res) {
       if (err) throw err;
@@ -1125,7 +1113,7 @@ if (err) throw err;
         {
           name: "name",
           type: "list",
-          message: "Select the DEPARTMENT you want to REMOVE :",
+          message: "Select the DEPARTMENT you want to REMOVE :\n".green,
           //Parses employee name array to prompt
           choices: departmentNames
         }      
@@ -1143,8 +1131,8 @@ if (err) throw err;
               let query = "DELETE FROM department WHERE department_id = " + departmentID
               connection.query(query,  (err, res) => {
                 if (err) throw err;
-                console.log("\n*************** DEPARTMENT" + departmentName + " Successfuly Updated! *****************\n".green)
-                employeeView()
+                console.log("\n*************** DEPARTMENT" + departmentName + " Successfuly Updated! *****************".green)
+                allDepartments()
               })
             })
             });
