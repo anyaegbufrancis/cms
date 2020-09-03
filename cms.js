@@ -1,4 +1,6 @@
 //Dependencies
+const clear = require('clear');
+const figlet = require('figlet');
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
@@ -25,6 +27,8 @@ connection.connect(function (err) {
   console.log("\nConnected to Database with ID ".blue + connection.threadId + "\n");
   mainEnteryPoint();
 });
+
+console.log('%cHelloWorld', 'font-size: 40px; color: green')
 
 //Main Inquirer Entry Point. Breaks prompts into blocks.
 function mainEnteryPoint() {
