@@ -41,6 +41,7 @@ function mainEnteryPoint() {
           "ADD      --  <<Employee, Roles, Departments>>".green,
           "UPDATE   --  <<Employee Data, Roles or Departments>>".green,
           "REMOVE   --  <<Employee, Roles or Departments>>".green,
+          "BUDGET   --  <<TOTAL Budget by Department>>".green,
           "EXIT     --  <<To Close the APP>>".yellow,
         ],
       },
@@ -184,6 +185,11 @@ function mainEnteryPoint() {
 
         case "REMOVE Department":
           removeDepartment();
+          break;
+        
+        //Department Budget
+        case "BUDGET   --  <<TOTAL Budget by Department>>".green:
+          departmentBudget();
           break;
 
         //Exit Case
@@ -1183,3 +1189,52 @@ removeDepartment = () => {
 
 
 
+//Function that queries existing Department names, return them to inquirer prompt 
+//and use user's selection to generate employees in that department.
+departmentBudget = () => {
+  var query = "SELECT department_name from department"
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    //Use ES6 filter to extract department_name array
+    let departmentArray = res.map(res => res["department_name"]);
+    //console.log(departmentArray) 
+    inquirer.prompt([
+      {
+        name: "dept",
+        type: "list",
+        message: "What Department BUDGET do you want to view?\n".magenta,
+        //Parses department name array to prompt
+        choices: departmentArray
+      }
+    ]).then(answer => {
+      //function to return Employees in a department and their salaries
+      let query = "SELECT first_name 'First Name', last_name 'Last Name', salary 'Salary' FROM employee ";
+      query += "INNER JOIN role ON employee.role_id=role.role_id ";
+      query += "INNER JOIN department ON role.department_id = department.department_id ";
+      query += "WHERE department_name=" + "'" + answer.dept + "'";          
+      
+      connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.log(res)
+        console.table(res);
+        let salarySum = 0
+        for (let i=0; i<res.length; i++){
+         salarySum += res[i].Salary
+        }        
+        console.log("Total Salary for Team in " + colors.magenta(answer.dept) + " : " + colors.green.underline(salarySum) + "\n")
+        inquirer.prompt([
+          {
+            name: "what",
+            type: "list",
+            message: "Hit RETURN to go back to the main page",
+            choices: ["RETURN"]
+          }
+        ]).then(answer => {
+          if (answer.what === "RETURN") {
+            mainEnteryPoint();
+          };
+        });
+      });
+    });
+  });
+};
