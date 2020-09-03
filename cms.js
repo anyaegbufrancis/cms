@@ -351,8 +351,19 @@ allManagers = () => {
       };  
       const filteredManager = [...new Set(newManagers)]
       let placeHolder = filteredManager.filter((item) => item!== 'None ')
-      console.table(placeHolder)
-      mainEnteryPoint();
+      console.table(placeHolder) 
+      inquirer.prompt([
+        {
+        name: "what",
+        type: "list",
+        message: "Hit RETURN to go back to the main page",
+        choices: ["RETURN"]
+        }        
+      ]).then(answer => {
+          if (answer.what === "RETURN") {
+          mainEnteryPoint();
+          }
+        })
     })  
   };
 
@@ -362,10 +373,21 @@ allDepartments = () => {
       query += "FROM department ";
   connection.query(query, function (err, res) {
     if (err) throw err;
-      console.log("\n***************************[ LIST OF ALL DEPARTMENTS]***************************\n".yellow
+      console.log("\n***************************[ LIST OF ALL DEPARTMENTS]***************************".green
       );
       console.table(res)
-      mainEnteryPoint();
+      inquirer.prompt([
+        {
+        name: "what",
+        type: "list",
+        message: "Hit RETURN to go back to the main page",
+        choices: ["RETURN"]
+        }        
+      ]).then(answer => {
+          if (answer.what === "RETURN") {
+          mainEnteryPoint();
+          }
+        })
     })  
   };
 
@@ -440,7 +462,7 @@ managerNames = [];
               //Throw error or report successful update
               connection.query(query,  (err, res) => {
                 if (err) throw err;
-                console.log("\n*************** Employee Database Successfuly Updated! *****************\n".green);
+                console.log("\n*************** Employee Database Successfuly Updated! *****************".green);
                 // Return to Main Menu 
                 employeeView()
               });   
@@ -503,7 +525,7 @@ if (err) throw err;
               //Throw error or report successful update
               connection.query(query,  (err, res) => {
                 if (err) throw err;
-                console.log("\n*************** Role Database Successfuly Updated! *****************\n".green);
+                console.log("\n*************** Role Database Successfuly Updated! *****************".green);
                 // Display 
                 allRoles()
               });   
@@ -515,7 +537,6 @@ if (err) throw err;
 
 //Add New Department
 addNewDepartment = () => { 
-                          
     //Call inquirer prompt to receive user parameters
     inquirer.prompt([
       {
@@ -536,7 +557,7 @@ addNewDepartment = () => {
               //Throw error or report successful update
               connection.query(query,  (err, res) => {
                 if (err) throw err;
-                console.log("\n*************** Department Database Successfuly Updated! *****************\n".green);
+                console.log("\n*************** Department Database Successfuly Updated! *****************".green);
                 // Display 
                 allDepartments()
               })
@@ -547,8 +568,7 @@ addNewDepartment = () => {
   
   
   //Add New Department
-updateEmployeeData = () => { 
-                                                      
+updateEmployeeData = () => {                                                       
   //Call inquirer prompt to receive user parameters
   inquirer.prompt([
     {
@@ -1129,6 +1149,10 @@ if (err) throw err;
       
           })
         }
+   
+  function toMainMenu () {
+    mainEnteryPoint()
+  }
 
 
 
