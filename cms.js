@@ -863,21 +863,15 @@ updateEmployeeData = () => {
                   console.log("\n*************** " + answer.name + " Role Successfully UPDATED! *****************".green)
                   employeeView()
                 })
-
               });
             })
-
           })
         })
-        break;
+      break;
     }
   }
   )
 }
-
-
-
-
 
 updateRoles = () => {
   //For Employee Role update
@@ -951,6 +945,7 @@ updateRoles = () => {
               })
             })
             break;
+            
           case "Role Department":
             let query = "SELECT department_name FROM department"
 
@@ -985,13 +980,12 @@ updateRoles = () => {
                 })
               })
             })
-            break;
+          break;
         }
       })
     });
   })
 }
-
 
 //Update Department Function
 updateDepartment = () => {
@@ -1063,7 +1057,7 @@ updateDepartment = () => {
                 // Display 
                 allDepartments()
               })
-              break;
+            break;
           }
         })
       })
@@ -1114,7 +1108,6 @@ removeEmployee = () => {
   })
 }
 
-
 //Remove Role from DB
 removeRoles = () => {
   let query = "SELECT job_title FROM role";
@@ -1152,11 +1145,9 @@ removeRoles = () => {
           allRoles()
         })
       })
-    });
-
+    })
   })
 }
-
 
 //Remove Role from DB
 removeDepartment = () => {
