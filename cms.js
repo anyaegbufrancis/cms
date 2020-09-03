@@ -25,6 +25,13 @@ const connection = mysql.createConnection({
 connection.connect(function (err) {
   if (err) throw err;
   console.log("\nConnected to Database with ID ".blue + connection.threadId + "\n");
+  clear();
+
+console.log(
+  (
+    figlet.textSync("Employee \n Manager", { horizontalLayout: "full" })
+  )
+);
   mainEnteryPoint();
 });
 
@@ -39,7 +46,7 @@ function mainEnteryPoint() {
       {
         name: "data",
         type: "list",
-        message: "What would you like to do?".magenta,
+        message: "What would you like to do?\n".magenta,
         choices: [
           "VIEW     --  <<Employees, Roles, Departments or Managers>>".green,
           "ADD      --  <<Employee, Roles, Departments>>".green,
