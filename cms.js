@@ -35,8 +35,6 @@ console.log(
   mainEnteryPoint();
 });
 
-console.log('%cHelloWorld', 'font-size: 40px; color: green')
-
 //Main Inquirer Entry Point. Breaks prompts into blocks.
 function mainEnteryPoint() {
   //console.clear()
