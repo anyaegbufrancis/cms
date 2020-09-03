@@ -603,7 +603,7 @@ updateEmployeeData = () => {
             let query = "UPDATE employee SET first_name = '" + answer.name + "' WHERE employee_id = " + res[0].employee_id
             connection.query(query,  (err, res) => {
               if (err) throw err;
-              console.log("\n*************** User First Name Successfuly Updated! *****************\n".green)
+              console.log("\n*************** User First Name Successfuly Updated! *****************".green)
               employeeView()
             })
           })
@@ -654,7 +654,7 @@ inquirer.prompt([
        let query = "UPDATE employee SET last_name = '" + answer.name + "' WHERE employee_id = " + res[0].employee_id
        connection.query(query,  (err, res) => {
          if (err) throw err;
-         console.log("\n*************** User First Name Successfuly Updated! *****************\n".green)
+         console.log("\n*************** User First Name Successfuly Updated! *****************".green)
          employeeView()
        })
      })
@@ -662,7 +662,6 @@ inquirer.prompt([
 })
 })
 break; 
-  
   
   //Case to cater for Employee Role update
   case   "Employee Role":
@@ -726,7 +725,7 @@ inquirer.prompt([
        let query = "UPDATE employee SET role_id = " + res[0].role_id + " WHERE employee_id = " + thisEmployee
        connection.query(query, (err, res) => {
          if (err) throw err;
-         console.log("\n*************** " + answer.name + " Role Successfully UPDATED! *****************\n".green)
+         console.log("\n*************** " + answer.name + " Role Successfully UPDATED! *****************".green)
        employeeView()         
        })       
      })  
