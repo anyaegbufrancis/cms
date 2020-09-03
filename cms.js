@@ -104,7 +104,6 @@ function mainEnteryPoint() {
         when: (response) => response.data === "REMOVE   --  <<Employee, Roles or Departments>>".green,
         choices: ["REMOVE Employee", "REMOVE Role", "REMOVE Department"],
       },
-
     ])
 
     //Capture each first level response. Some final level questions passed to function level inquirer
@@ -267,7 +266,6 @@ employeeByDepartment = () => {
     })
   })
 };
-
 
 //Function that queries existing Manager names, return them to inquirer prompt 
 //and use user's selection to generate employees under the Manager's Leadership.
@@ -441,8 +439,6 @@ allDepartments = () => {
   })
 };
 
-//**************************************************************************************************************** */
-
 //Add New Employee Functions
 addNewEmployee = () => {
   //SQL Query to return job_title, department_name and manager_names.
@@ -525,7 +521,6 @@ addNewEmployee = () => {
   }
   )
 }
-
 
 //Add New Employee Functions
 addNewRole = () => {
@@ -614,7 +609,7 @@ addNewDepartment = () => {
           // Display 
           allDepartments()
         })
-        break;
+      break;
     }
   })
 }
@@ -734,7 +729,7 @@ updateEmployeeData = () => {
             });
           })
         })
-        break;
+      break;
 
       //Case to cater for Employee Role update
       case "Employee Role":
@@ -805,7 +800,7 @@ updateEmployeeData = () => {
             });
           })
         })
-        break;
+      break;
 
       //Case to cater for Employee Manager update
       case "Employee Manager":
