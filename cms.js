@@ -207,8 +207,18 @@ function mainEnteryPoint() {
   //Print Response to terminal table
   connection.query(query,  (err, res) => {
     if (err) throw err;
-    console.table(res);
-    mainEnteryPoint()
+    console.table(res); inquirer.prompt([
+      {
+      name: "what",
+      type: "list",
+      message: "Hit RETURN to go back to the main page",
+      choices: ["RETURN"]
+      }        
+    ]).then(answer => {
+        if (answer.what === "RETURN") {
+        mainEnteryPoint();
+        }
+      })
   });
 }
 
@@ -242,7 +252,18 @@ employeeByDepartment = () => {
           connection.query(query,  (err, res) => {
             if (err) throw err;
             console.table(res);
-            mainEnteryPoint()
+            inquirer.prompt([
+              {
+              name: "what",
+              type: "list",
+              message: "Hit RETURN to go back to the main page",
+              choices: ["RETURN"]
+              }        
+            ]).then(answer => {
+                if (answer.what === "RETURN") {
+                mainEnteryPoint();
+                }
+              })
           });
     })
     })   
@@ -279,7 +300,18 @@ employeeByManager = () => {
           connection.query(query,  (err, res) => {
             if (err) throw err;
             console.table(res);
-            mainEnteryPoint()
+            inquirer.prompt([
+              {
+              name: "what",
+              type: "list",
+              message: "Hit RETURN to go back to the main page",
+              choices: ["RETURN"]
+              }        
+            ]).then(answer => {
+                if (answer.what === "RETURN") {
+                mainEnteryPoint();
+                }
+              })
           });
     })
     })   
@@ -298,7 +330,7 @@ viewJobTitle = () => {
       {
         name: "dept",
         type: "list",
-        message: "Which Job Title do you want present Employees?\n".magenta,
+        message: "Which Job Title do you want to view their present Employees?\n".magenta,
         //Parses department name array to prompt
         choices: jobTitleArray
       }      
@@ -309,14 +341,24 @@ viewJobTitle = () => {
           query += "FROM employee ";
           query += "INNER JOIN role ON employee.role_id = role.role_id ";
           query += "WHERE job_title=" + "'" + answer.dept + "'";
-          console.log("\n***************************[ LIST EMPLOYEES WITH JOB TITLE ".yellow + colors.green(answer.dept) + " ]***************************\n".yellow
+          console.log("\n***************************[ LIST EMPLOYEES WITH JOB TITLE ".yellow + colors.green(answer.dept) + " ]***************************".yellow
           );          
           //Print Response to terminal table
           connection.query(query,  (err, res) => {
             if (err) throw err;
             console.table(res);
-            // runSearch()
-            mainEnteryPoint()
+            inquirer.prompt([
+              {
+              name: "what",
+              type: "list",
+              message: "Hit RETURN to go back to the main page",
+              choices: ["RETURN"]
+              }        
+            ]).then(answer => {
+                if (answer.what === "RETURN") {
+                mainEnteryPoint();
+                }
+              })
           });
     })
     })   
@@ -331,7 +373,18 @@ allRoles = () => {
       console.log("\n***************************[ LIST OF ALL EXISTING ROLES]***************************\n".yellow
       );
       console.table(res)
-      mainEnteryPoint();
+      inquirer.prompt([
+        {
+        name: "what",
+        type: "list",
+        message: "Hit RETURN to go back to the main page",
+        choices: ["RETURN"]
+        }        
+      ]).then(answer => {
+          if (answer.what === "RETURN") {
+          mainEnteryPoint();
+          }
+        })
     })  
   };
 
