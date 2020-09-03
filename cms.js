@@ -21,7 +21,7 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
   if (err) throw err;
-  console.log("connected as id " + connection.threadId + "\n");
+  console.log("\nConnected to Database with ID ".blue + connection.threadId + "\n");
   mainEnteryPoint();
 });
 
@@ -34,7 +34,7 @@ function mainEnteryPoint() {
       {
         name: "data",
         type: "list",
-        message: "What would you like to do?\n".magenta,
+        message: "What would you like to do?".magenta,
         choices: [
           "VIEW     --  <<Employees, Roles, Departments or Managers>>".green,
           "ADD      --  <<Employee, Roles, Departments>>".green,
@@ -48,7 +48,7 @@ function mainEnteryPoint() {
       {
         name: "data",
         type: "list",
-        message: "What do you like to view?\n".magenta,
+        message: "What do you like to view?".magenta,
         when: (response) =>
           response.data === "VIEW     --  <<Employees, Roles, Departments or Managers>>".green,
         choices: ["Employee Details", "Roles, Managers or Departments"],
@@ -58,7 +58,7 @@ function mainEnteryPoint() {
       {
         name: "data",
         type: "list",
-        message: "What Employee data do you want to view?\n".magenta,
+        message: "What Employee data do you want to view?".magenta,
         when: (response) => response.data === "Employee Details",
         choices: [
           "ALL Employee Details",
@@ -72,7 +72,7 @@ function mainEnteryPoint() {
       {
         name: "data",
         type: "list",
-        message: "Please select which data you like to VIEW?\n".magenta,
+        message: "Please select which data you like to VIEW?".magenta,
         when: (response) => response.data === "Roles, Managers or Departments",
         choices: ["View ALL Roles", "View ALL Departments", "View ALL Managers"],
       },
@@ -81,7 +81,7 @@ function mainEnteryPoint() {
        {
         name: "data",
         type: "list",
-        message: "What new entity do you want to ADD?\n".magenta,
+        message: "What new entity do you want to ADD?".magenta,
         when: (response) =>
           response.data === "ADD      --  <<Employee, Roles, Departments>>".green,
         choices: ["Add New Employee", "Add New Role", "Add New Department"],
@@ -91,7 +91,7 @@ function mainEnteryPoint() {
       {
         name: "data",
         type: "list",
-        message: "Which Data do you want to UPDATE?\n".magenta,
+        message: "Which Data do you want to UPDATE?".magenta,
         when: (response) => response.data === "UPDATE   --  <<Employee Data, Roles or Departments>>".green,
         choices: ["Update Employee Data", "Update Roles", "Update Department"],
       },
@@ -187,10 +187,9 @@ function mainEnteryPoint() {
           break;
           
           //Exit Case
-          case "EXIT     --  <<To Close the APP>>".red :
-          console.log("\nClosing session...\n".green)
-          connection.end()          
-          
+          case "EXIT     --  <<To Close the APP>>".yellow :
+          console.log("\nCLOSING SESSION...\n".green)
+          connection.end()  
       }
     });
 }
@@ -201,7 +200,7 @@ function mainEnteryPoint() {
   query += "FROM employee ";
   query += "INNER JOIN role ON employee.role_id=role.role_id ";
   query += "INNER JOIN department ON role.department_id = department.department_id ";
-  console.log("\n*********************************[ UPDATED EMPLOYEES  ]********************************\n".yellow
+  console.log("\n*********************************[ UPDATED EMPLOYEES  ]********************************".yellow
   );
   
   //Print Response to terminal table
@@ -284,17 +283,16 @@ employeeByManager = () => {
       {
         name: "dept",
         type: "list",
-        message: "Which Manager do you want to see their team members?\n".magenta,
+        message: "Which Manager do you want to see their team members?".magenta,
         //Parses department name array to prompt
         choices: managerArray
       }      
     ]) .then( answer => {
           //function to return matching users here
-          console.table("\nBuilding output...\n".green);
           let query = "SELECT first_name 'First Name', last_name 'Last Name' ";
           query += "FROM employee ";
           query += "WHERE manager_name=" + "'" + answer.dept + "'";
-          console.log("\n***************************[ LIST EMPLOYEES MANAGER BY ".yellow + colors.green(answer.dept) + " ]***************************\n".yellow
+          console.log("\n***************************[ LIST EMPLOYEES MANAGER BY ".yellow + colors.green(answer.dept) + " ]***************************".yellow
           );          
           //Print Response to terminal table
           connection.query(query,  (err, res) => {
@@ -330,13 +328,12 @@ viewJobTitle = () => {
       {
         name: "dept",
         type: "list",
-        message: "Which Job Title do you want to view their present Employees?\n".magenta,
+        message: "Which Job Title do you want to view their present Employees?".magenta,
         //Parses department name array to prompt
         choices: jobTitleArray
       }      
     ]) .then( answer => {
           //function to return matching users here
-          console.table("\nBuilding output...\n".green);
           let query = "SELECT first_name 'First Name', last_name 'Last Name' ";
           query += "FROM employee ";
           query += "INNER JOIN role ON employee.role_id = role.role_id ";
@@ -370,7 +367,7 @@ allRoles = () => {
   connection.query(query, function (err, res) {
     if (err) throw err;
     //Use ES6 filter to extract department_name array  
-      console.log("\n***************************[ LIST OF ALL EXISTING ROLES]***************************\n".yellow
+      console.log("\n***************************[ LIST OF ALL EXISTING ROLES]***************************".yellow
       );
       console.table(res)
       inquirer.prompt([
@@ -396,7 +393,7 @@ allManagers = () => {
   connection.query(query, function (err, res) {
     if (err) throw err;
     //Use ES6 filter to extract department_name array  
-      console.log("\n***************************[ LIST OF ALL MANAGERS]***************************\n".yellow
+      console.log("\n***************************[ LIST OF ALL MANAGERS]***************************".yellow
       );
       newManagers = [];
       for (let i=0; i<res.length; i++){
@@ -462,12 +459,12 @@ managerNames = [];
       {
         name: "first_name",
         type: "input",
-        message: "Employee First Name (ONE WORD): \n".green
+        message: "Employee First Name (ONE WORD): ".green
       },
       {
         name: "last_name",
         type: "input",
-        message: "Employee Last Name (ONE WORD): \n".green
+        message: "Employee Last Name (ONE WORD): ".green
       },        
       {
         name: "manager_name",
@@ -494,7 +491,7 @@ managerNames = [];
         {
           name: "job_title",
           type: "list",
-          message: "Select Employee job title (Please select 'None' Employee without a Manager): \n".green,
+          message: "Select Employee job title (Please select 'None' Employee without a Manager): ".green,
           //Parses Existing Manager names array to prompt
           choices: jobTitles
         }
@@ -545,17 +542,17 @@ if (err) throw err;
       {
         name: "job_title",
         type: "input",
-        message: "Job Title: \n".green
+        message: "Job Title: ".green
       },
       {
         name: "salary",
         type: "input",
-        message: "Salary (Format: 5000): \n".green
+        message: "Salary (Format: 5000): ".green
       },
       {
         name: "department_name",
         type: "list",
-        message: "Select Department: \n".green,
+        message: "Select Department: ".green,
         //Parses Existing Department names array to prompt
         choices: departmentArray
       },  
@@ -595,7 +592,7 @@ addNewDepartment = () => {
       {
         name: "department_name",
         type: "input",
-        message: "New Department Name: \n".green
+        message: "New Department Name: ".green
       }   
     ]) .then( answer => {
       
@@ -649,7 +646,7 @@ updateEmployeeData = () => {
       {
         name: "name",
         type: "list",
-        message: "Select Employee you want to update their first name?\n".green,
+        message: "Select Employee you want to update their first name?".green,
         //Parses employee name array to prompt
         choices: employeeNames
       }      
@@ -668,7 +665,7 @@ updateEmployeeData = () => {
               {
                 name: "name",
                 type: "input",
-                message: "Please enter the new First Name: \n".green,
+                message: "Please enter the new First Name: ".green,
               }      
             ]) .then( answer => {
               
@@ -700,7 +697,7 @@ inquirer.prompt([
  {
    name: "name",
    type: "list",
-   message: "Select Employee you want to update their first name?\n".green,
+   message: "Select Employee you want to update their first name?".green,
    //Parses employee name array to prompt
    choices: employeeNames
  }      
@@ -719,7 +716,7 @@ inquirer.prompt([
          {
            name: "name",
            type: "input",
-           message: "Please enter the new Last Name: \n".green,
+           message: "Please enter the new Last Name: ".green,
          }      
        ]) .then( answer => {
          
@@ -762,14 +759,14 @@ inquirer.prompt([
 {
  name: "name",
  type: "list",
- message: "Select EMPLOYEE you want to update their job title: \n".green,
+ message: "Select EMPLOYEE you want to update their job title: ".green,
  //Parses employee name array to prompt
  choices: employeesList
 },   
 {
   name: "title",
   type: "list",
-  message: "Select NEW JOB TITLE of the employee: \n".green,
+  message: "Select NEW JOB TITLE of the employee: ".green,
   //Parses employee name array to prompt
   choices: jobTitles
  }   
@@ -823,7 +820,7 @@ inquirer.prompt([
   {
    name: "name",
    type: "list",
-   message: "Select EMPLOYEE you want to update their Manager: \n".green,
+   message: "Select EMPLOYEE you want to update their Manager: ".green,
    //Parses employee name array to prompt
    choices: employeesList
   }  
@@ -837,7 +834,7 @@ inquirer.prompt([
 {
  name: "name",
  type: "list",
- message: "Select the name of the NEW MANAGER: \n".green,
+ message: "Select the name of the NEW MANAGER: ".green,
  //Parses employee name array to prompt
  choices: managerList
 }  
@@ -894,14 +891,14 @@ inquirer.prompt([
 {
  name: "title",
  type: "list",
- message: "Select Job Title you want to update: \n".green,
+ message: "Select Job Title you want to update: ".green,
  //Parses employee name array to prompt
  choices: roleNames
 },    
 {
   name: "activity",
   type: "list",
-  message: "Please select which parameter to update: \n".green,
+  message: "Please select which parameter to update: ".green,
   //Parses employee name array to prompt
   choices: ["Role Name", "Role Salary", "Role Department"]
  }       
@@ -920,7 +917,7 @@ inquirer.prompt([
       {
         name: "name",
         type: "input",
-        message: "Please enter the new JOB TITLE NAME: \n".green,
+        message: "Please enter the new JOB TITLE NAME: ".green,
       }      
     ]) .then( answer => {
       newRoleName = answer.name
@@ -938,7 +935,7 @@ inquirer.prompt([
             {
               name: "salary",
               type: "input",
-              message: "Please enter the new SALARY for the job title: \n".green,
+              message: "Please enter the new SALARY for the job title: ".green,
             }      
           ]) .then( answer => {
             newSalary = answer.salary
@@ -966,7 +963,7 @@ inquirer.prompt([
                   {
                     name: "dept",
                     type: "list",
-                    message: "Please select the new DEPARTMENT for the job title: \n".green,
+                    message: "Please select the new DEPARTMENT for the job title: ".green,
                     choices: departmentArray
                   }      
                 ]) .then( answer => {
@@ -1010,7 +1007,7 @@ if (err) throw err;
       {
         name: "department_name",
         type: "list",
-        message: "Select Department to update (ONY NAME CHANGE AVAILABLE): \n".green,
+        message: "Select Department to update (ONY NAME CHANGE AVAILABLE): ".green,
         //Parses Existing Department names array to prompt
         choices: departmentArray
       },  
@@ -1026,19 +1023,19 @@ if (err) throw err;
                       {
                       name: "choose",
                       type: "list",
-                      message: "What DEPARTMENT DATA do you want to Update? :\n".green,
+                      message: "What DEPARTMENT DATA do you want to Update? :".green,
                       choices: ["Department Name", "Department ID"]
                       },
                       {
                         name: "newName",
                         type: "input",
-                        message: "Please ENTER the new DEPARTMENT NAME :\n".green,
+                        message: "Please ENTER the new DEPARTMENT NAME :".green,
                         when: (answer) => answer.choose === "Department Name"
                         },
                         {
                           name: "newID",
                           type: "input",
-                          message: "Please ENTER the new DEPARTMENT ID :\n".green,
+                          message: "Please ENTER the new DEPARTMENT ID :".green,
                           when: (answer) => answer.choose === "Department ID"
                           }
                     ]).then( answer => {
@@ -1089,7 +1086,7 @@ if (err) throw err;
         {
           name: "name",
           type: "list",
-          message: "Select the EMPLOYEE you want to REMOVE :\n".green,
+          message: "Select the EMPLOYEE you want to REMOVE :".green,
           //Parses employee name array to prompt
           choices: employeeNames
         }      
@@ -1133,7 +1130,7 @@ if (err) throw err;
         {
           name: "name",
           type: "list",
-          message: "Select the ROLE you want to REMOVE :\n".green,
+          message: "Select the ROLE you want to REMOVE :".green,
           //Parses employee name array to prompt
           choices: roleNames
         }      
@@ -1176,7 +1173,7 @@ if (err) throw err;
         {
           name: "name",
           type: "list",
-          message: "Select the DEPARTMENT you want to REMOVE :\n".green,
+          message: "Select the DEPARTMENT you want to REMOVE :".green,
           //Parses employee name array to prompt
           choices: departmentNames
         }      
@@ -1202,10 +1199,6 @@ if (err) throw err;
       
           })
         }
-   
-  function toMainMenu () {
-    mainEnteryPoint()
-  }
 
 
 
