@@ -28,11 +28,11 @@
   
 Please clone the project to your local repo, install the dependencies, start the app by running npm start. Different options are presented in the main menu. You can choose which of the options you will like to do and that includes View (Employee details, Roles, Departments or Managers), Add new Employees, Roles or Departments, Update Employee, Roles or Department records, Remove an employeea role or a department, view the budget of a chosen department or exit the application with the EXIT button. 
 
- ![Page 1](./assets/lp.png)
- ![Page 2](./assets/np-1.png)
- ![Page 3](./assets/np-2.png)
- ![Page 4](./assets/np-3.png)
- ![Page 5](.assets/np-4.png)
+ ![](./Assets/l-4.png)
+ ![Page 2](./Assets/5-8.png)
+ ![Page 3](./Assets/9-12.png)
+ ![Page 4](./Assets/13-16.png)
+ ![Page 5](./Assets/18.png)
   
   ## License
   
@@ -50,7 +50,7 @@ Please clone the project to your local repo, install the dependencies, start the
   
   Please click the image below to see the feature demo on the linked video:
   
-  [![README.md Feature Demo](https://img.youtube.com/vi/dxdY9nfmwwI/0.jpg)](https://www.youtube.com/watch?v=dxdY9nfmwwI)
+  [![README.md Feature Demo](https://img.youtube.com/vi/IBJuKc6hrPw/0.jpg)](https://www.youtube.com/watch?v=IBJuKc6hrPw)
   
   ## Authors
   
